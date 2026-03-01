@@ -11,8 +11,29 @@
       --paper:#f2e8d5;--paper-dark:#e8d9bc;--ink:#1a1208;--ink-light:#3d2e18;
       --ink-faint:#6b5740;--rule:#2a1e0e;--red:#8b1a1a;--gold:#7a5c1e;--col-gap:22px;
     }
+    /* ── DARK MODE (Evening Edition) ── */
+    body.evening {
+      --paper:#1a1510;--paper-dark:#221c15;--ink:#e8d9bc;--ink-light:#c8b89a;
+      --ink-faint:#7a6a56;--rule:#5a4a38;--red:#c0392b;
+    }
+    body.evening { background:#0e0c09; }
+    body.evening .section-nav { background:#0e0c09; border-bottom-color:#5a4a38; }
+    body.evening .newspaper-footer { background:#221c15; }
+    body.evening .classified-block,
+    body.evening .advert,
+    body.evening .season-box { background:#221c15; }
+    body.evening .masthead-title,
+    body.evening .hl-xl,
+    body.evening .hl-lg,
+    body.evening .hl-md,
+    body.evening .hl-sm { color:var(--ink); }
+    body.evening p { color:var(--ink-light); }
+    body.evening .rss-item a { color:var(--ink); }
+    body.evening .weather-box { background:#221c15; border-color:#5a4a38; }
+    body.evening .frost-box { background:#221c15; border-color:#5a4a38; }
+
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:'IM Fell English',Georgia,serif;background:#c8b89a;color:var(--ink);min-height:100vh;padding:20px;}
+    body{font-family:'IM Fell English',Georgia,serif;background:#c8b89a;color:var(--ink);min-height:100vh;padding:20px;transition:background 0.4s,color 0.4s;}
     .paper{max-width:1340px;margin:0 auto;background-color:var(--paper);background-image:repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(0,0,0,0.018) 28px,rgba(0,0,0,0.018) 29px);box-shadow:0 4px 40px rgba(0,0,0,0.45);}
     .masthead{border-bottom:6px double var(--rule);padding:18px 36px 14px;text-align:center;}
     .masthead-top{display:flex;justify-content:space-between;align-items:center;font-family:'Courier Prime',monospace;font-size:0.68em;color:var(--ink-faint);border-bottom:1px solid var(--rule);padding-bottom:8px;margin-bottom:10px;letter-spacing:0.04em;}
@@ -203,6 +224,72 @@
       .newspaper-footer{flex-direction:column;gap:8px;text-align:center;padding:16px;}
       .section-nav button{padding:10px 14px;font-size:0.65em;}
     }
+
+    /* ── WEATHER WIDGET ── */
+    .weather-box{
+      border:2px solid var(--rule);padding:16px;margin-bottom:16px;
+      background:var(--paper-dark);text-align:center;
+    }
+    .weather-box .w-kicker{font-family:'Playfair Display SC',serif;font-size:0.62em;
+      letter-spacing:0.2em;color:var(--red);display:block;margin-bottom:6px;}
+    .weather-box .w-city{font-family:'Playfair Display',serif;font-size:1.1em;
+      font-weight:700;color:var(--ink);margin-bottom:4px;}
+    .weather-box .w-temp{font-family:'UnifrakturMaguntia',cursive;font-size:2.8em;
+      line-height:1;color:var(--ink);margin:6px 0;}
+    .weather-box .w-desc{font-family:'IM Fell English',serif;font-style:italic;
+      font-size:0.9em;color:var(--ink-light);margin-bottom:8px;}
+    .weather-box .w-details{font-family:'Courier Prime',monospace;font-size:0.65em;
+      color:var(--ink-faint);letter-spacing:0.06em;line-height:1.8;}
+    .weather-box .w-updated{font-family:'Courier Prime',monospace;font-size:0.58em;
+      color:var(--ink-faint);margin-top:8px;font-style:italic;}
+
+    /* ── FROST COUNTDOWN ── */
+    .frost-box{
+      border:2px solid var(--rule);padding:14px;margin-bottom:16px;
+      background:var(--paper-dark);
+    }
+    .frost-box .f-head{font-family:'Playfair Display SC',serif;font-size:0.7em;
+      letter-spacing:0.15em;color:var(--red);border-bottom:1px solid var(--rule);
+      padding-bottom:5px;margin-bottom:10px;}
+    .frost-row{display:flex;justify-content:space-between;align-items:baseline;
+      padding:5px 0;border-bottom:1px dotted var(--ink-faint);font-size:0.82em;}
+    .frost-row:last-child{border-bottom:none;}
+    .frost-row .f-label{font-family:'IM Fell English',serif;color:var(--ink-light);}
+    .frost-row .f-val{font-family:'Playfair Display',serif;font-weight:700;
+      color:var(--ink);font-size:1.05em;}
+    .frost-row .f-days{font-family:'Courier Prime',monospace;font-size:0.72em;
+      color:var(--red);}
+
+    /* ── SEED CALCULATOR ── */
+    .seed-calc{border:2px solid var(--rule);padding:14px;margin-bottom:16px;background:var(--paper-dark);}
+    .seed-calc .sc-head{font-family:'Playfair Display SC',serif;font-size:0.7em;
+      letter-spacing:0.15em;color:var(--red);border-bottom:1px solid var(--rule);
+      padding-bottom:5px;margin-bottom:10px;}
+    .seed-calc select,.seed-calc input{
+      width:100%;font-family:'Courier Prime',monospace;font-size:0.75em;
+      background:var(--paper);border:1px solid var(--rule);color:var(--ink);
+      padding:5px 8px;margin-bottom:8px;
+    }
+    .seed-calc .sc-result{font-family:'IM Fell English',serif;font-size:0.85em;
+      color:var(--ink-light);line-height:1.5;min-height:2em;margin-top:4px;
+      border-top:1px dotted var(--ink-faint);padding-top:8px;}
+    .seed-calc button{
+      width:100%;background:var(--ink);color:var(--paper);border:none;
+      font-family:'Playfair Display SC',serif;font-size:0.68em;letter-spacing:0.1em;
+      padding:6px;cursor:pointer;margin-bottom:8px;
+    }
+    .seed-calc button:hover{background:var(--red);}
+
+    /* ── DARK MODE TOGGLE ── */
+    .edition-toggle{
+      position:fixed;bottom:22px;right:22px;z-index:999;
+      background:var(--ink);color:var(--paper);border:2px solid var(--rule);
+      font-family:'Playfair Display SC',serif;font-size:0.65em;letter-spacing:0.12em;
+      padding:8px 14px;cursor:pointer;box-shadow:0 2px 12px rgba(0,0,0,0.3);
+      transition:all 0.2s;
+    }
+    .edition-toggle:hover{background:var(--red);}
+    body.evening .edition-toggle{background:var(--paper-dark);color:var(--ink);}
   </style>
 </head>
 <body>
@@ -226,6 +313,7 @@
   <button data-section="gardening">Gardening</button>
   <button data-section="tractors">Wheel Horse</button>
   <button data-section="auctions">Auctions</button>
+  <button data-section="diy">DIY &amp; Home</button>
   <button data-section="directory">Full Directory</button>
 </nav>
 
@@ -287,22 +375,47 @@
       </div>
     </div>
 
-    <!-- RSS SIDEBAR: Front Page -->
+    <!-- SIDEBAR: Front Page -->
     <div class="rss-sidebar">
-      <div class="rss-sidebar-head">From the Homestead Wire</div>
+
+      <!-- WEATHER (updated by GitHub Action) -->
+      <!-- WEATHER_PLACEHOLDER -->
+
+      <!-- FROST COUNTDOWN -->
+      <div class="frost-box">
+        <div class="f-head">Tiffin, Ohio · Frost Dates</div>
+        <div class="frost-row"><span class="f-label">Last Spring Frost</span><span class="f-val">Apr 25</span></div>
+        <div class="frost-row"><span class="f-label">Days Until Safe</span><span class="f-days" id="days-spring">—</span></div>
+        <div class="frost-row"><span class="f-label">First Fall Frost</span><span class="f-val">Oct 15</span></div>
+        <div class="frost-row"><span class="f-label">Days Until Frost</span><span class="f-days" id="days-fall">—</span></div>
+        <div class="frost-row"><span class="f-label">Growing Season</span><span class="f-val">~173 days</span></div>
+      </div>
+
+      <!-- SEED CALCULATOR -->
+      <div class="seed-calc">
+        <div class="sc-head">Seed Start Calculator</div>
+        <select id="seed-select">
+          <option value="">— Select a vegetable —</option>
+          <option value="10">Tomatoes (10 wks before)</option>
+          <option value="10">Peppers (10 wks before)</option>
+          <option value="6">Eggplant (6 wks before)</option>
+          <option value="4">Broccoli (4 wks before)</option>
+          <option value="4">Cabbage (4 wks before)</option>
+          <option value="3">Lettuce (3 wks before)</option>
+          <option value="6">Celery (6 wks before)</option>
+          <option value="3">Kale (3 wks before)</option>
+          <option value="2">Squash (2 wks before)</option>
+          <option value="2">Cucumber (2 wks before)</option>
+          <option value="2">Melon (2 wks before)</option>
+        </select>
+        <button onclick="calcSeed()">Calculate Start Date</button>
+        <div class="sc-result" id="seed-result">Select a vegetable above to see when to start seeds indoors.</div>
+      </div>
+
+      <div class="rss-sidebar-head" style="margin-top:16px;">From the Homestead Wire</div>
       <span class="rss-sidebar-sub">Fresh dispatches — updated daily</span>
-      <div id="rss-front" class="rss-feed-container"><div class="rss-item"><a href="https://growagoodlife.com/how-to-grow-potatoes/" target="_blank" rel="noopener">How to Grow Potatoes: A Complete Guide for Home Gardeners</a><span class="rss-meta">Feb 11, 2026</span><span class="rss-desc">Discover how to grow potatoes at home for incredible flavor. Learn when to plant, how...
-The post How to Grow …</span></div>
-<div class="rss-item"><a href="https://growagoodlife.com/direct-sow-after-last-frost/" target="_blank" rel="noopener">Seeds to Direct Sow After Your Last Frost</a><span class="rss-meta">Feb 9, 2026</span><span class="rss-desc">Learn which seeds to direct sow after your last frost date, including beans, squash, cucumbers,...
-The post Se…</span></div>
-<div class="rss-item"><a href="https://growagoodlife.com/direct-sow-2-4-weeks-before-last-frost/" target="_blank" rel="noopener">Seeds to Direct Sow 2-4 Weeks Before Your Last Frost</a><span class="rss-meta">Feb 6, 2026</span><span class="rss-desc">Learn which seeds to direct sow 2-4 weeks before your last frost date, including root...
-The post Seeds to Dir…</span></div>
-<div class="rss-item"><a href="https://growagoodlife.com/start-seeds-indoors-2-4-weeks-before-last-frost/" target="_blank" rel="noopener">Seeds to Start Indoors 2–4 Weeks Before Your Last Frost</a><span class="rss-meta">Feb 1, 2026</span><span class="rss-desc">Learn which seeds to start indoors 2–4 weeks before your last frost date, including fast-growing...
-The post S…</span></div>
-<div class="rss-item"><a href="https://growagoodlife.com/direct-sow-4-6-weeks-before-last-frost/" target="_blank" rel="noopener">Seeds to Direct Sow 4-6 Weeks Before Your Last Frost</a><span class="rss-meta">Jan 29, 2026</span><span class="rss-desc">Learn which seeds to direct sow 4-6 weeks before your last frost date, including leafy...
-The post Seeds to Di…</span></div></div>
+      <div id="rss-front" class="rss-feed-container"><!-- RSS_PLACEHOLDER_RSS_FRONT --></div>
       <a class="rss-source-link" href="https://growagoodlife.com" target="_blank">Source: Grow a Good Life →</a>
-      
     </div>
   </div>
 </div>
@@ -362,12 +475,7 @@ The post Seeds to Di…</span></div></div>
     <div class="rss-sidebar">
       <div class="rss-sidebar-head">From the Shop Floor</div>
       <span class="rss-sidebar-sub">Latest from Fine Woodworking</span>
-      <div id="rss-woodworking" class="rss-feed-container"><div class="rss-item"><a href="https://www.finewoodworking.com/2026/02/27/i-discover-shibusa" target="_blank" rel="noopener">I Discover Shibusa</a><span class="rss-meta">Feb 27, 2026</span><span class="rss-desc">For Tad Baum, John Reed Fox&#x27;s process-focused approach to hand-tool work initially seemed impractical but late…</span></div>
-<div class="rss-item"><a href="https://www.finewoodworking.com/2026/02/26/review-tooley-park-scribes" target="_blank" rel="noopener">Review: Tooley Park Scribes</a><span class="rss-meta">Feb 26, 2026</span><span class="rss-desc">There will never be one scribe to rule them all, so versatility reigns supreme in the limited space of the too…</span></div>
-<div class="rss-item"><a href="https://www.finewoodworking.com/2026/02/25/tides-and-timbers" target="_blank" rel="noopener">Tides and Timbers</a><span class="rss-meta">Feb 25, 2026</span><span class="rss-desc">Peter Pierobon&#x27;s series of Tidal furniture was inspired by his encounters with logs strewn on the beaches alon…</span></div>
-<div class="rss-item"><a href="https://www.finewoodworking.com/2026/02/24/going-pro-part-4-what-id-do-differently" target="_blank" rel="noopener">Going Pro, Part 4: What I’d Do Differently</a><span class="rss-meta">Feb 24, 2026</span><span class="rss-desc">Adam Godet shares insights on when to trust the professionals while starting a furniture business.</span></div>
-<div class="rss-item"><a href="https://www.finewoodworking.com/2026/02/24/add-a-strip-for-a-smoother-template" target="_blank" rel="noopener">Add a Strip for a Smoother Template</a><span class="rss-meta">Feb 24, 2026</span><span class="rss-desc">In making a curved routing template, it is difficult to create a smooth, fair surface without any bumps or dip…</span></div>
-<div class="rss-item"><a href="https://www.finewoodworking.com/2026/02/23/eye-catching-counter-stools" target="_blank" rel="noopener">Eye-Catching Counter Stools</a><span class="rss-meta">Feb 23, 2026</span><span class="rss-desc">The process Tim Coleman employed for crafting a set of counter stools combines machine setups for joinery and …</span></div></div>
+      <div id="rss-woodworking" class="rss-feed-container"><!-- RSS_PLACEHOLDER_RSS_WOODWORKING --></div>
       <a class="rss-source-link" href="https://www.finewoodworking.com" target="_blank">Source: Fine Woodworking →</a>
       
     </div>
@@ -417,12 +525,7 @@ The post Seeds to Di…</span></div></div>
     <div class="rss-sidebar">
       <div class="rss-sidebar-head">From the Garden Gate</div>
       <span class="rss-sidebar-sub">Latest from Harvest to Table</span>
-      <div id="rss-gardening" class="rss-feed-container"><div class="rss-item"><a href="https://harvesttotable.com/how-to-grow-bromeliads-a-beginners-guide-to-the-top-indoor-varieties/" target="_blank" rel="noopener">How to Grow Bromeliads: A Beginner’s Guide to the Top Indoor Varieties</a><span class="rss-meta">Feb 10, 2026</span><span class="rss-desc">Bromeliads are some of the most striking and low-maintenance houseplants you can grow. With their bold foliage…</span></div>
-<div class="rss-item"><a href="https://harvesttotable.com/pruning-learning-hub/" target="_blank" rel="noopener">Pruning Learning Hub</a><span class="rss-meta">Feb 10, 2026</span><span class="rss-desc">Pruning can feel confusing at first, but once you understand the basics, it becomes one of the most rewarding …</span></div>
-<div class="rss-item"><a href="https://harvesttotable.com/no-space-grow-these-7-vegetables-in-pots/" target="_blank" rel="noopener">No Space? Grow These 7 Vegetables in Pots</a><span class="rss-meta">Feb 10, 2026</span><span class="rss-desc">No backyard? No problem. You can grow a surprising amount of food in containers—on a patio, balcony, porch, or…</span></div>
-<div class="rss-item"><a href="https://harvesttotable.com/flowering-shrubs-to-prune-in-spring-what-when-and-how/" target="_blank" rel="noopener">Flowering Shrubs to Prune in Spring: What, When, and How</a><span class="rss-meta">Feb 10, 2026</span><span class="rss-desc">Pruning flowering shrubs can feel confusing—especially in spring, when plants are waking up and buds are formi…</span></div>
-<div class="rss-item"><a href="https://harvesttotable.com/fruit-trees-and-fruit-bushes-to-prune-in-spring-what-when-and-how-and-what-not-to-prune/" target="_blank" rel="noopener">Fruit Trees and Fruit Bushes to Prune in Spring: What, When, and How (and What Not to Prune)</a><span class="rss-meta">Feb 10, 2026</span><span class="rss-desc">Pruning fruit trees and fruiting bushes in spring is one of the most important tasks you can do to improve pla…</span></div>
-<div class="rss-item"><a href="https://harvesttotable.com/how-to-tell-new-growth-from-old-growth-when-pruning/" target="_blank" rel="noopener">How to Tell New Growth From Old Growth When Pruning</a><span class="rss-meta">Feb 10, 2026</span><span class="rss-desc">Understanding the difference between new growth and older wood is one of the most important pruning skills for…</span></div></div>
+      <div id="rss-gardening" class="rss-feed-container"><!-- RSS_PLACEHOLDER_RSS_GARDENING --></div>
       <a class="rss-source-link" href="https://harvesttotable.com" target="_blank">Source: Harvest to Table →</a>
       
     </div>
@@ -482,12 +585,7 @@ The post Seeds to Di…</span></div></div>
     <div class="rss-sidebar">
       <div class="rss-sidebar-head">From the Small Farm</div>
       <span class="rss-sidebar-sub">Homestead &amp; old iron dispatches</span>
-      <div id="rss-tractors" class="rss-feed-container"><div class="rss-item"><a href="https://thecontraryfarmer.wordpress.com/2020/01/10/the-last-farmer/" target="_blank" rel="noopener">The Last Farmer</a><span class="rss-meta">Jan 11, 2020</span><span class="rss-desc">An Interview in 2001 with Marvelous Marv Grabacre From Gene Logsdon {Thanks to Pamela Smith, an Editor with Th…</span></div>
-<div class="rss-item"><a href="https://thecontraryfarmer.wordpress.com/2019/05/04/gardening-in-the-nude-or-new-use-for-rhubarb-3/" target="_blank" rel="noopener">Gardening In The Nude (or New Use For Rhubarb)</a><span class="rss-meta">May 4, 2019</span><span class="rss-desc">. From Gene Logsdon {Repost} One of the greatest mysteries of life for me is society’s ambivalence about the n…</span></div>
-<div class="rss-item"><a href="https://thecontraryfarmer.wordpress.com/2018/10/15/our-hidden-wound-2/" target="_blank" rel="noopener">Our Hidden Wound</a><span class="rss-meta">Oct 15, 2018</span><span class="rss-desc">Gene Logsdon (1992) I’m a hayseed, I’m a hayseed, and my ears are full of pigweed. How they flop in stormy wea…</span></div>
-<div class="rss-item"><a href="https://thecontraryfarmer.wordpress.com/2018/03/21/the-economy-of-eden/" target="_blank" rel="noopener">The Economy of Eden</a><span class="rss-meta">Mar 21, 2018</span><span class="rss-desc">Gene Logsdon Sun Magazine January 1996 [Rummaging around in some boxes in the garage I came across this quinte…</span></div>
-<div class="rss-item"><a href="https://thecontraryfarmer.wordpress.com/2018/02/27/the-contrary-farmer-2/" target="_blank" rel="noopener">The Contrary Farmer</a><span class="rss-meta">Feb 27, 2018</span><span class="rss-desc">Gene Logsdon From Our Archives May 2007 A farmer of deep ecological sensitivity is to the plow jockey on his 2…</span></div>
-<div class="rss-item"><a href="https://thecontraryfarmer.wordpress.com/2017/12/30/gene-logsdon-wood-is-more-precious-than-gold/" target="_blank" rel="noopener">Wood Is More Precious Than Gold</a><span class="rss-meta">Dec 30, 2017</span><span class="rss-desc">Gene Logsdon From Our Archives January 2008 The price of gold is going crazy as investors look for a shelter f…</span></div></div>
+      <div id="rss-tractors" class="rss-feed-container"><!-- RSS_PLACEHOLDER_RSS_TRACTORS --></div>
       <a class="rss-source-link" href="https://thecontraryfarmer.wordpress.com" target="_blank">Source: The Contrary Farmer →</a>
       
     </div>
@@ -540,6 +638,89 @@ The post Seeds to Di…</span></div></div>
   </div>
 </div>
 
+<!-- ══════════════ DIY & HOME ══════════════ -->
+<div class="section-page" id="diy">
+  <div class="section-banner">
+    <span class="kicker">Section Six</span>
+    <h2>The Handyman's Gazette</h2>
+    <div class="deck">Home Repair, Outdoor Projects &amp; the Satisfaction of Doing It Yourself</div>
+  </div>
+
+  <div class="with-sidebar">
+    <div class="main-cols">
+      <div class="cols-3">
+        <div class="col">
+          <div class="flag">Instruction</div>
+          <h2 class="hl-lg">The Finest Resources for the Home Repairman</h2>
+          <div class="byline">Handyman's Desk</div>
+          <p>There exists no finer education for the homeowner than the hard-won knowledge of fixing what is broken with one's own two hands. From leaky faucets to deck repairs, the resources below represent the finest guides available to the self-reliant craftsman.</p>
+          <hr class="rule-single">
+          <div class="no-dropcap">
+            <div class="classified-item"><span class="c-name">Family Handyman</span><span class="c-dots"></span><a href="https://www.familyhandyman.com/" target="_blank">Visit</a></div>
+            <p>The gold standard of home repair — step-by-step guides for plumbing, electrical, carpentry, and more.</p>
+            <div class="classified-item"><span class="c-name">This Old House</span><span class="c-dots"></span><a href="https://www.thisoldhouse.com/" target="_blank">Visit</a></div>
+            <p>Decades of trusted home improvement knowledge, from foundations to finish work.</p>
+            <div class="classified-item"><span class="c-name">The Spruce — Home Repair</span><span class="c-dots"></span><a href="https://www.thespruce.com/home-improvement-4127706" target="_blank">Visit</a></div>
+            <p>Practical how-to articles on repairs, maintenance, and seasonal upkeep.</p>
+            <div class="classified-item"><span class="c-name">Ask This Old House (YouTube)</span><span class="c-dots"></span><a href="https://www.youtube.com/@AskThisOldHouse" target="_blank">YouTube</a></div>
+            <p>Real homeowner problems solved on camera — approachable and thorough.</p>
+            <div class="classified-item"><span class="c-name">Handyman Tips</span><span class="c-dots"></span><a href="https://handymantips.org/" target="_blank">Visit</a></div>
+            <p>Home repairs, appliances, tools and maintenance — plainly written.</p>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="flag">Outdoor Projects</div>
+          <h2 class="hl-lg">Resources for Yard, Deck &amp; Outbuilding</h2>
+          <hr class="rule-single">
+          <div class="classified-block">
+            <div class="c-head">Outdoor &amp; Yard</div>
+            <div class="classified-item"><span><span class="c-name">DIY Network — Outdoors</span><span class="c-desc">Decks, patios, fences, sheds</span></span><a href="https://www.diynetwork.com/how-to/outdoors" target="_blank">Visit</a></div>
+            <div class="classified-item"><span><span class="c-name">Family Handyman — Outdoor</span><span class="c-desc">Deck building, fencing, drainage</span></span><a href="https://www.familyhandyman.com/outdoor/" target="_blank">Visit</a></div>
+            <div class="classified-item"><span><span class="c-name">Ron Hazelton (YouTube)</span><span class="c-desc">Classic outdoor project walkthroughs</span></span><a href="https://www.youtube.com/@RonHazelton" target="_blank">YouTube</a></div>
+            <div class="classified-item"><span><span class="c-name">r/DIY (Reddit)</span><span class="c-desc">Active community — post a project, get advice</span></span><a href="https://www.reddit.com/r/DIY/" target="_blank">Visit</a></div>
+            <div class="classified-item"><span><span class="c-name">r/HomeImprovement</span><span class="c-desc">Real homeowner Q&amp;A, no fluff</span></span><a href="https://www.reddit.com/r/HomeImprovement/" target="_blank">Visit</a></div>
+          </div>
+          <div class="pull-quote"><p>"The man who fixes his own home repairs builds more than walls — he builds confidence."</p></div>
+        </div>
+
+        <div class="col">
+          <div class="flag">Supplies &amp; Tools</div>
+          <h2 class="hl-lg">Where to Source Materials &amp; Equipment</h2>
+          <hr class="rule-single">
+          <div class="advert">
+            <span class="ad-kicker">Hardware &amp; Materials</span>
+            <h3>Menards</h3>
+            <p>Tiffin's nearest big-box for lumber, plumbing, electrical &amp; hardware.</p>
+            <a href="https://www.menards.com/" target="_blank">menards.com</a>
+          </div>
+          <div class="advert">
+            <span class="ad-kicker">Tool Reference</span>
+            <h3>Tool Reviews — Fine Homebuilding</h3>
+            <p>Unbiased tool tests and recommendations for serious DIYers.</p>
+            <a href="https://www.finehomebuilding.com/tools" target="_blank">finehomebuilding.com</a>
+          </div>
+          <div class="advert">
+            <span class="ad-kicker">Seasonal Maintenance</span>
+            <h3>Home Maintenance Checklist</h3>
+            <p>Family Handyman's full seasonal home maintenance schedule — print &amp; keep.</p>
+            <a href="https://www.familyhandyman.com/list/home-maintenance-checklist/" target="_blank">View Checklist</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RSS SIDEBAR: DIY -->
+    <div class="rss-sidebar">
+      <div class="rss-sidebar-head">From the Workshop Bench</div>
+      <span class="rss-sidebar-sub">Latest from Family Handyman</span>
+      <div id="rss-diy" class="rss-feed-container"><!-- RSS_PLACEHOLDER_RSS_DIY --></div>
+      <a class="rss-source-link" href="https://www.familyhandyman.com" target="_blank">Source: Family Handyman →</a>
+    </div>
+  </div>
+</div>
+
+
 <!-- ══════════════ FULL DIRECTORY ══════════════ -->
 <div class="section-page" id="directory">
   <div class="section-banner"><span class="kicker">Reference Edition</span><h2>The Complete Directory</h2><div class="deck">Every Resource of This Gazette, Arranged for Ready Consultation</div></div>
@@ -583,6 +764,17 @@ The post Seeds to Di…</span></div></div>
         <div class="classified-item"><span><span class="c-name">Briggs &amp; Stratton Channel</span><span class="c-desc">Engine maintenance &amp; repair videos</span></span><a href="https://www.youtube.com/@BriggsandStratton" target="_blank">Visit</a></div>
       </div>
       <div class="classified-block">
+        <div class="c-head">🔧 DIY &amp; Home Repair</div>
+        <div class="classified-item"><span><span class="c-name">Family Handyman</span><span class="c-desc">Step-by-step home repair guides</span></span><a href="https://www.familyhandyman.com/" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">This Old House</span><span class="c-desc">Trusted home improvement knowledge</span></span><a href="https://www.thisoldhouse.com/" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">The Spruce — Home Repair</span><span class="c-desc">Practical how-to articles</span></span><a href="https://www.thespruce.com/home-improvement-4127706" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">Ask This Old House</span><span class="c-desc">YouTube — real repairs on camera</span></span><a href="https://www.youtube.com/@AskThisOldHouse" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">DIY Network — Outdoors</span><span class="c-desc">Decks, patios, fences, sheds</span></span><a href="https://www.diynetwork.com/how-to/outdoors" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">Handyman Tips</span><span class="c-desc">Home repairs, tools &amp; maintenance</span></span><a href="https://handymantips.org/" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">r/DIY (Reddit)</span><span class="c-desc">Community Q&amp;A for every project</span></span><a href="https://www.reddit.com/r/DIY/" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">r/HomeImprovement</span><span class="c-desc">Real homeowner advice</span></span><a href="https://www.reddit.com/r/HomeImprovement/" target="_blank">Visit</a></div>
+      </div>
+      <div class="classified-block">
         <div class="c-head">🔨 Auctions</div>
         <div class="classified-item"><span><span class="c-name">AuctionZip</span><span class="c-desc">Largest auction directory in the US</span></span><a href="https://www.auctionzip.com/" target="_blank">Visit</a></div>
         <div class="classified-item"><span><span class="c-name">HiBid</span><span class="c-desc">Online bidding — widely used in Ohio</span></span><a href="https://www.hibid.com/" target="_blank">Visit</a></div>
@@ -599,7 +791,7 @@ The post Seeds to Di…</span></div></div>
 
 </main>
 
-<div style="text-align:center;font-family:'Courier Prime',monospace;font-size:0.65em;color:var(--ink-faint);padding:6px 0 2px;border-top:1px solid var(--rule);">Feeds last refreshed: March 1, 2026 at 9:32 PM UTC</div>
+<!-- LAST_UPDATED_PLACEHOLDER -->
 <footer class="newspaper-footer">
   <p>Vol. I, No. 1 &nbsp;·&nbsp; March 1, 2026 &nbsp;·&nbsp; Central Ohio Edition</p>
   <div class="footer-title">The Sauber-Tribune</div>
@@ -608,7 +800,11 @@ The post Seeds to Di…</span></div></div>
 </div><!-- .paper -->
 
 
+<!-- Dark mode toggle button -->
+<button class="edition-toggle" id="edition-btn" onclick="toggleEdition()">☽ Evening Edition</button>
+
 <script>
+  /* ── NAV ── */
   const btns  = document.querySelectorAll('.section-nav button');
   const pages = document.querySelectorAll('.section-page');
   btns.forEach(btn => {
@@ -620,6 +816,58 @@ The post Seeds to Di…</span></div></div>
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   });
+
+  /* ── DARK MODE ── */
+  function toggleEdition() {
+    const isEvening = document.body.classList.toggle('evening');
+    document.getElementById('edition-btn').textContent = isEvening ? '☀ Morning Edition' : '☽ Evening Edition';
+    localStorage.setItem('tribune-edition', isEvening ? 'evening' : 'morning');
+  }
+  // Restore preference on load
+  if(localStorage.getItem('tribune-edition') === 'evening') {
+    document.body.classList.add('evening');
+    document.getElementById('edition-btn').textContent = '☀ Morning Edition';
+  }
+
+  /* ── FROST COUNTDOWN ── */
+  (function() {
+    const now = new Date();
+    const year = now.getFullYear();
+    // Tiffin, OH — last spring frost Apr 25, first fall frost Oct 15
+    let springFrost = new Date(year, 3, 25); // Apr 25
+    let fallFrost   = new Date(year, 9, 15); // Oct 15
+    if(springFrost < now) springFrost = new Date(year+1, 3, 25);
+    if(fallFrost   < now) fallFrost   = new Date(year+1, 9, 15);
+    const msDay = 86400000;
+    const daysSpring = Math.ceil((springFrost - now) / msDay);
+    const daysFall   = Math.ceil((fallFrost   - now) / msDay);
+    const elS = document.getElementById('days-spring');
+    const elF = document.getElementById('days-fall');
+    if(elS) elS.textContent = daysSpring > 0 ? daysSpring + ' days' : 'Past — plant away!';
+    if(elF) elF.textContent = daysFall   > 0 ? daysFall   + ' days' : 'Frost season';
+  })();
+
+  /* ── SEED START CALCULATOR ── */
+  function calcSeed() {
+    const sel = document.getElementById('seed-select');
+    const res = document.getElementById('seed-result');
+    if(!sel.value) { res.textContent = 'Please select a vegetable.'; return; }
+    const weeks = parseInt(sel.value);
+    const vegName = sel.options[sel.selectedIndex].text.split(' (')[0];
+    // Last frost Tiffin: Apr 25
+    const year = new Date().getFullYear();
+    let frostDate = new Date(year, 3, 25);
+    if(frostDate < new Date()) frostDate = new Date(year+1, 3, 25);
+    const startDate = new Date(frostDate.getTime() - weeks * 7 * 86400000);
+    const opts = { month:'long', day:'numeric', year:'numeric' };
+    const today = new Date();
+    const daysUntil = Math.ceil((startDate - today) / 86400000);
+    let msg;
+    if(daysUntil > 0)       msg = `Start <strong>${vegName}</strong> indoors on <strong>${startDate.toLocaleDateString('en-US',opts)}</strong> — that is ${daysUntil} days from today.`;
+    else if(daysUntil > -14) msg = `<strong>${vegName}</strong> should be starting <em>right now</em> — the window opened ${Math.abs(daysUntil)} days ago!`;
+    else                     msg = `The indoor start window for <strong>${vegName}</strong> has passed for this season. Plan to direct-sow or purchase transplants.`;
+    res.innerHTML = msg;
+  }
 </script>
 </body>
 </html>
