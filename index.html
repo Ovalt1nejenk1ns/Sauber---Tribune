@@ -291,11 +291,9 @@
     <div class="rss-sidebar">
       <div class="rss-sidebar-head">From the Homestead Wire</div>
       <span class="rss-sidebar-sub">Fresh dispatches — updated daily</span>
-      <div id="rss-front" class="rss-feed-container">
-        <div class="rss-loading">Fetching latest dispatches…</div>
-      </div>
+      <div id="rss-front" class="rss-feed-container"><!-- RSS_PLACEHOLDER_RSS_FRONT --></div>
       <a class="rss-source-link" href="https://growagoodlife.com" target="_blank">Source: Grow a Good Life →</a>
-      <button class="rss-refresh-btn" onclick="loadFeed('rss-front','https://growagoodlife.com/feed',6)">↻ Refresh Feed</button>
+      
     </div>
   </div>
 </div>
@@ -355,11 +353,9 @@
     <div class="rss-sidebar">
       <div class="rss-sidebar-head">From the Shop Floor</div>
       <span class="rss-sidebar-sub">Latest from Fine Woodworking</span>
-      <div id="rss-woodworking" class="rss-feed-container">
-        <div class="rss-loading">Fetching latest dispatches…</div>
-      </div>
+      <div id="rss-woodworking" class="rss-feed-container"><!-- RSS_PLACEHOLDER_RSS_WOODWORKING --></div>
       <a class="rss-source-link" href="https://www.finewoodworking.com" target="_blank">Source: Fine Woodworking →</a>
-      <button class="rss-refresh-btn" onclick="loadFeed('rss-woodworking','https://www.finewoodworking.com/feed',6)">↻ Refresh Feed</button>
+      
     </div>
   </div>
 </div>
@@ -407,11 +403,9 @@
     <div class="rss-sidebar">
       <div class="rss-sidebar-head">From the Garden Gate</div>
       <span class="rss-sidebar-sub">Latest from Harvest to Table</span>
-      <div id="rss-gardening" class="rss-feed-container">
-        <div class="rss-loading">Fetching latest dispatches…</div>
-      </div>
+      <div id="rss-gardening" class="rss-feed-container"><!-- RSS_PLACEHOLDER_RSS_GARDENING --></div>
       <a class="rss-source-link" href="https://harvesttotable.com" target="_blank">Source: Harvest to Table →</a>
-      <button class="rss-refresh-btn" onclick="loadFeed('rss-gardening','https://harvesttotable.com/feed',6)">↻ Refresh Feed</button>
+      
     </div>
   </div>
 </div>
@@ -469,11 +463,9 @@
     <div class="rss-sidebar">
       <div class="rss-sidebar-head">From the Small Farm</div>
       <span class="rss-sidebar-sub">Homestead &amp; old iron dispatches</span>
-      <div id="rss-tractors" class="rss-feed-container">
-        <div class="rss-loading">Fetching latest dispatches…</div>
-      </div>
+      <div id="rss-tractors" class="rss-feed-container"><!-- RSS_PLACEHOLDER_RSS_TRACTORS --></div>
       <a class="rss-source-link" href="https://thecontraryfarmer.wordpress.com" target="_blank">Source: The Contrary Farmer →</a>
-      <button class="rss-refresh-btn" onclick="loadFeed('rss-tractors','https://thecontraryfarmer.wordpress.com/feed',6)">↻ Refresh Feed</button>
+      
     </div>
   </div>
 </div>
@@ -583,6 +575,7 @@
 
 </main>
 
+<!-- LAST_UPDATED_PLACEHOLDER -->
 <footer class="newspaper-footer">
   <p>Vol. I, No. 1 &nbsp;·&nbsp; March 1, 2026 &nbsp;·&nbsp; Central Ohio Edition</p>
   <div class="footer-title">The Sauber-Tribune</div>
@@ -590,81 +583,6 @@
 </footer>
 </div><!-- .paper -->
 
-<script>
-/* ── NAV ── */
-const btns=document.querySelectorAll('.section-nav button');
-const pages=document.querySelectorAll('.section-page');
-btns.forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    btns.forEach(b=>b.classList.remove('active'));
-    pages.forEach(p=>p.classList.remove('active'));
-    btn.classList.add('active');
-    const id=btn.dataset.section;
-    document.getElementById(id).classList.add('active');
-    window.scrollTo({top:0,behavior:'smooth'});
-    // lazy-load the RSS feed for this section when first shown
-    lazyLoad(id);
-  });
-});
 
-/* ── RSS via allorigins.win CORS proxy + native XML parsing ── */
-// allorigins wraps any URL and returns { contents: '<raw xml>' }
-const PROXY = 'https://api.allorigins.win/get?url=';
-
-const feedMap = {
-  front:       { el:'rss-front',       url:'https://growagoodlife.com/feed',                    count:6 },
-  woodworking: { el:'rss-woodworking', url:'https://www.finewoodworking.com/feed',               count:6 },
-  gardening:   { el:'rss-gardening',   url:'https://harvesttotable.com/feed',                    count:6 },
-  tractors:    { el:'rss-tractors',    url:'https://thecontraryfarmer.wordpress.com/feed',       count:6 }
-};
-
-const loaded = {};
-
-function lazyLoad(sectionId){
-  if(loaded[sectionId]) return;
-  const cfg = feedMap[sectionId];
-  if(!cfg) return;
-  loadFeed(cfg.el, cfg.url, cfg.count);
-  loaded[sectionId] = true;
-}
-
-function loadFeed(elId, feedUrl, count){
-  const el = document.getElementById(elId);
-  if(!el) return;
-  el.innerHTML = '<div class="rss-loading">Fetching latest dispatches…</div>';
-  const api = PROXY + encodeURIComponent(feedUrl);
-  fetch(api)
-    .then(r => r.json())
-    .then(data => {
-      const xml = data.contents;
-      if(!xml) throw new Error('empty');
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(xml, 'text/xml');
-      const items = Array.from(doc.querySelectorAll('item')).slice(0, count||6);
-      if(!items.length) throw new Error('no items');
-      el.innerHTML = items.map(item => {
-        const title = item.querySelector('title')?.textContent || 'Untitled';
-        const link  = item.querySelector('link')?.textContent
-                   || item.querySelector('guid')?.textContent || '#';
-        const pubDate = item.querySelector('pubDate')?.textContent || '';
-        const date = pubDate ? new Date(pubDate).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '';
-        const rawDesc = item.querySelector('description')?.textContent || '';
-        const desc = rawDesc.replace(/<[^>]*>/g,'').trim();
-        const snippet = desc.length > 110 ? desc.slice(0,110)+'…' : desc;
-        return `<div class="rss-item">
-          <a href="${link}" target="_blank" rel="noopener">${title}</a>
-          <span class="rss-meta">${date}</span>
-          ${snippet ? `<span class="rss-desc">${snippet}</span>` : ''}
-        </div>`;
-      }).join('');
-    })
-    .catch(() => {
-      el.innerHTML='<div class="rss-error">Dispatch delayed.<br>The telegraph lines may be down. Try the Refresh button below.</div>';
-    });
-}
-
-// Load the front page feed immediately on page load
-lazyLoad('front');
-</script>
 </body>
 </html>
