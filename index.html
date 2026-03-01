@@ -607,15 +607,15 @@ btns.forEach(btn=>{
   });
 });
 
-/* ── RSS VIA RSS2JSON PROXY (free, no key needed for public feeds) ── */
-// We use rss2json.com free API which proxies the RSS and resolves CORS
-const PROXY = 'https://api.rss2json.com/v1/api.json?rss_url=';
+/* ── RSS via allorigins.win CORS proxy + native XML parsing ── */
+// allorigins wraps any URL and returns { contents: '<raw xml>' }
+const PROXY = 'https://api.allorigins.win/get?url=';
 
 const feedMap = {
-  front:       { el:'rss-front',       url:'https://growagoodlife.com/feed',                        count:6 },
-  woodworking: { el:'rss-woodworking', url:'https://www.finewoodworking.com/feed',                   count:6 },
-  gardening:   { el:'rss-gardening',   url:'https://harvesttotable.com/feed',                        count:6 },
-  tractors:    { el:'rss-tractors',    url:'https://thecontraryfarmer.wordpress.com/feed',           count:6 }
+  front:       { el:'rss-front',       url:'https://growagoodlife.com/feed',                    count:6 },
+  woodworking: { el:'rss-woodworking', url:'https://www.finewoodworking.com/feed',               count:6 },
+  gardening:   { el:'rss-gardening',   url:'https://harvesttotable.com/feed',                    count:6 },
+  tractors:    { el:'rss-tractors',    url:'https://thecontraryfarmer.wordpress.com/feed',       count:6 }
 };
 
 const loaded = {};
@@ -632,27 +632,33 @@ function loadFeed(elId, feedUrl, count){
   const el = document.getElementById(elId);
   if(!el) return;
   el.innerHTML = '<div class="rss-loading">Fetching latest dispatches…</div>';
-  const api = PROXY + encodeURIComponent(feedUrl) + '&count=' + (count||6);
+  const api = PROXY + encodeURIComponent(feedUrl);
   fetch(api)
-    .then(r=>r.json())
-    .then(data=>{
-      if(data.status!=='ok' || !data.items || !data.items.length){
-        el.innerHTML='<div class="rss-error">The wire is quiet today.<br>Check back shortly or visit the source link below.</div>';
-        return;
-      }
-      el.innerHTML = data.items.slice(0,count||6).map(item=>{
-        const date = item.pubDate ? new Date(item.pubDate).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '';
-        // strip HTML from description, trim to ~100 chars
-        const raw = (item.description||'').replace(/<[^>]*>/g,'').trim();
-        const desc = raw.length > 110 ? raw.slice(0,110)+'…' : raw;
+    .then(r => r.json())
+    .then(data => {
+      const xml = data.contents;
+      if(!xml) throw new Error('empty');
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(xml, 'text/xml');
+      const items = Array.from(doc.querySelectorAll('item')).slice(0, count||6);
+      if(!items.length) throw new Error('no items');
+      el.innerHTML = items.map(item => {
+        const title = item.querySelector('title')?.textContent || 'Untitled';
+        const link  = item.querySelector('link')?.textContent
+                   || item.querySelector('guid')?.textContent || '#';
+        const pubDate = item.querySelector('pubDate')?.textContent || '';
+        const date = pubDate ? new Date(pubDate).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '';
+        const rawDesc = item.querySelector('description')?.textContent || '';
+        const desc = rawDesc.replace(/<[^>]*>/g,'').trim();
+        const snippet = desc.length > 110 ? desc.slice(0,110)+'…' : desc;
         return `<div class="rss-item">
-          <a href="${item.link}" target="_blank" rel="noopener">${item.title}</a>
+          <a href="${link}" target="_blank" rel="noopener">${title}</a>
           <span class="rss-meta">${date}</span>
-          ${desc ? `<span class="rss-desc">${desc}</span>` : ''}
+          ${snippet ? `<span class="rss-desc">${snippet}</span>` : ''}
         </div>`;
       }).join('');
     })
-    .catch(()=>{
+    .catch(() => {
       el.innerHTML='<div class="rss-error">Dispatch delayed.<br>The telegraph lines may be down. Try the Refresh button below.</div>';
     });
 }
