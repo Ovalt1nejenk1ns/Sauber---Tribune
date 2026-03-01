@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Sauber-Tribune — Workshop Tools</title>
+<link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Playfair+Display+SC:wght@400;700&family=IM+Fell+English:ital@0;1&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f2e8d5; --paper-dark: #e8d9bc; --ink: #1a1208;
+    --ink-light: #3d2e18; --ink-faint: #6b5740; --rule: #2a1e0e;
+    --red: #8b1a1a; --green: #1a4a1a;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'IM Fell English', Georgia, serif;
+    background: #c8b89a;
+    min-height: 100vh;
+    padding: 24px 16px;
+    color: var(--ink);
+  }
+
+  .paper {
+    max-width: 900px;
+    margin: 0 auto;
+    background: var(--paper);
+    background-image: repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(0,0,0,.018) 28px, rgba(0,0,0,.018) 29px);
+    box-shadow: 0 6px 40px rgba(0,0,0,.45);
+    padding: 32px 40px 48px;
+  }
+
+  /* ── MASTHEAD ── */
+  .masthead {
+    text-align: center;
+    border-bottom: 5px double var(--rule);
+    padding-bottom: 16px;
+    margin-bottom: 28px;
+  }
+  .paper-name {
+    font-family: 'UnifrakturMaguntia', cursive;
+    font-size: clamp(2em, 6vw, 3.6em);
+    line-height: .9;
+    color: var(--ink);
+  }
+  .paper-sub {
+    font-family: 'Playfair Display SC', serif;
+    font-size: .65em;
+    letter-spacing: .3em;
+    color: var(--ink-faint);
+    margin-top: 6px;
+  }
+  .tools-flag {
+    display: inline-block;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Playfair Display SC', serif;
+    font-size: .65em;
+    letter-spacing: .18em;
+    padding: 3px 18px;
+    margin-top: 10px;
+  }
+
+  /* ── TOOL COLUMNS ── */
+  .tools-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+  .tool-col {
+    padding: 0 28px;
+    border-right: 1px solid var(--rule);
+  }
+  .tool-col:first-child { padding-left: 0; }
+  .tool-col:last-child  { border-right: none; padding-right: 0; }
+
+  .tool-head {
+    border-bottom: 3px double var(--rule);
+    padding-bottom: 10px;
+    margin-bottom: 18px;
+  }
+  .tool-kicker {
+    font-family: 'Playfair Display SC', serif;
+    font-size: .6em;
+    letter-spacing: .25em;
+    color: var(--red);
+    display: block;
+    margin-bottom: 4px;
+  }
+  .tool-title {
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-size: clamp(1.3em, 2.5vw, 1.75em);
+    line-height: 1.05;
+    color: var(--ink);
+  }
+  .tool-deck {
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: .85em;
+    color: var(--ink-faint);
+    margin-top: 5px;
+    line-height: 1.4;
+  }
+
+  /* ── FORM ELEMENTS ── */
+  label {
+    font-family: 'Playfair Display SC', serif;
+    font-size: .68em;
+    letter-spacing: .1em;
+    color: var(--ink-faint);
+    display: block;
+    margin-bottom: 4px;
+    margin-top: 14px;
+  }
+  input, select {
+    width: 100%;
+    font-family: 'Courier Prime', monospace;
+    font-size: .85em;
+    background: var(--paper-dark);
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    padding: 7px 10px;
+    outline: none;
+    transition: border-color .15s;
+  }
+  input:focus, select:focus { border-color: var(--red); }
+  input::placeholder { color: var(--ink-faint); font-style: italic; }
+
+  .btn {
+    width: 100%;
+    margin-top: 14px;
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    font-family: 'Playfair Display SC', serif;
+    font-size: .72em;
+    letter-spacing: .12em;
+    padding: 9px;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .btn:hover { background: var(--red); }
+
+  /* ── RESULTS ── */
+  .result-box {
+    margin-top: 18px;
+    border: 2px solid var(--rule);
+    padding: 14px 16px;
+    background: var(--paper-dark);
+    min-height: 80px;
+    display: none;
+  }
+  .result-box.show { display: block; }
+  .result-box.error { border-color: var(--red); }
+  .result-box.success { border-color: var(--green); }
+
+  .result-label {
+    font-family: 'Playfair Display SC', serif;
+    font-size: .6em;
+    letter-spacing: .2em;
+    color: var(--ink-faint);
+    display: block;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+  }
+  .result-main {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 1.3em;
+    color: var(--ink);
+    line-height: 1.15;
+    margin-bottom: 6px;
+  }
+  .result-detail {
+    font-family: 'IM Fell English', serif;
+    font-size: .85em;
+    color: var(--ink-light);
+    line-height: 1.55;
+  }
+  .result-detail.error-msg {
+    color: var(--red);
+    font-style: italic;
+  }
+  .result-row {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px dotted var(--ink-faint);
+    padding: 4px 0;
+    font-size: .82em;
+  }
+  .result-row:last-child { border: none; }
+  .result-row .rl { font-family: 'IM Fell English', serif; color: var(--ink-faint); }
+  .result-row .rv { font-family: 'Courier Prime', monospace; font-weight: 700; color: var(--ink); }
+
+  .tip-box {
+    margin-top: 16px;
+    border-left: 3px solid var(--ink-faint);
+    padding: 8px 12px;
+    font-family: 'IM Fell English', serif;
+    font-size: .8em;
+    font-style: italic;
+    color: var(--ink-faint);
+    line-height: 1.5;
+  }
+
+  /* ── DIVIDER ── */
+  .rule-double {
+    border: none;
+    border-top: 4px double var(--rule);
+    margin: 24px 0;
+  }
+
+  /* ── FOOTER ── */
+  .page-footer {
+    border-top: 3px double var(--rule);
+    margin-top: 32px;
+    padding-top: 12px;
+    text-align: center;
+    font-family: 'Courier Prime', monospace;
+    font-size: .65em;
+    color: var(--ink-faint);
+    letter-spacing: .06em;
+  }
+  .page-footer .footer-name {
+    font-family: 'UnifrakturMaguntia', cursive;
+    font-size: 1.8em;
+    color: var(--ink);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  @media (max-width: 640px) {
+    .paper { padding: 20px 18px 36px; }
+    .tools-grid { grid-template-columns: 1fr; }
+    .tool-col { padding: 0; border-right: none; border-bottom: 1px solid var(--rule); padding-bottom: 28px; margin-bottom: 28px; }
+    .tool-col:last-child { border-bottom: none; }
+  }
+</style>
+</head>
+<body>
+<div class="paper">
+
+  <!-- Masthead -->
+  <div class="masthead">
+    <div class="paper-name">The Sauber-Tribune</div>
+    <div class="paper-sub">Workshop Tools &amp; Garden Reference</div>
+    <div class="tools-flag">Special Reference Edition</div>
+  </div>
+
+  <div class="tools-grid">
+
+    <!-- ════════════════════════════════════
+         TOOL 1 — WHEEL HORSE MODEL LOOKUP
+         ════════════════════════════════════ -->
+    <div class="tool-col">
+      <div class="tool-head">
+        <span class="tool-kicker">Tractor Identification</span>
+        <div class="tool-title">Wheel Horse Model Registry</div>
+        <div class="tool-deck">Enter your model number to identify production year, horsepower, and specifications</div>
+      </div>
+
+      <label for="wh-model">Model Number</label>
+      <input id="wh-model" type="text" placeholder="e.g. C-160, 312-8, B-80, 416-8">
+
+      <div style="margin-top:6px;font-family:'Courier Prime',monospace;font-size:.7em;color:var(--ink-faint);">
+        Found under seat, on dash panel, or on frame tag
+      </div>
+
+      <button class="btn" onclick="lookupWH()">Look Up This Model →</button>
+
+      <div id="wh-result" class="result-box">
+        <span class="result-label">Registry Record</span>
+        <div id="wh-result-content"></div>
+      </div>
+
+      <div class="tip-box">
+        <strong>Where to find it:</strong> The model &amp; serial number tag is typically located under the seat, on the left side of the frame near the battery, or on the dash panel beneath the steering wheel. Clean with a wire brush if obscured by rust or paint.
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════
+         TOOL 2 — SEED START CALCULATOR
+         ════════════════════════════════════ -->
+    <div class="tool-col">
+      <div class="tool-head">
+        <span class="tool-kicker">Garden Planning</span>
+        <div class="tool-title">Seed Start Calculator</div>
+        <div class="tool-deck">Enter your zip code for precise indoor sowing dates based on your local frost date</div>
+      </div>
+
+      <label for="seed-zip">Zip Code</label>
+      <input id="seed-zip" type="text" placeholder="e.g. 44883" maxlength="5" inputmode="numeric">
+
+      <label for="seed-veg">Vegetable</label>
+      <select id="seed-veg">
+        <option value="">— Select a vegetable —</option>
+        <optgroup label="Start Indoors — Long Season">
+          <option value="10|true">Tomatoes — 10 wks before last frost</option>
+          <option value="10|true">Peppers — 10–12 wks before last frost</option>
+          <option value="8|true">Eggplant — 8–10 wks before last frost</option>
+          <option value="6|true">Celery — 10–12 wks before last frost</option>
+          <option value="10|true">Onions (from seed) — 10 wks before last frost</option>
+        </optgroup>
+        <optgroup label="Start Indoors — Short Season">
+          <option value="6|true">Broccoli — 6–8 wks before last frost</option>
+          <option value="6|true">Cabbage — 6–8 wks before last frost</option>
+          <option value="6|true">Cauliflower — 6–8 wks before last frost</option>
+          <option value="4|true">Brussels Sprouts — 4–6 wks before last frost</option>
+          <option value="3|true">Lettuce — 4–6 wks before last frost</option>
+          <option value="3|true">Kale — 4–6 wks before last frost</option>
+          <option value="3|true">Chard — 4 wks before last frost</option>
+        </optgroup>
+        <optgroup label="Start Indoors — After Last Frost Date">
+          <option value="2|true|2">Squash — 2–3 wks before transplanting</option>
+          <option value="2|true|2">Cucumber — 2–3 wks before transplanting</option>
+          <option value="3|true|2">Melon — 3–4 wks before transplanting</option>
+          <option value="2|true|2">Pumpkin — 2–3 wks before transplanting</option>
+        </optgroup>
+        <optgroup label="Direct Sow Outdoors">
+          <option value="0|false|-3">Peas — direct sow 4–6 wks before last frost</option>
+          <option value="0|false|-2">Spinach — direct sow 4–6 wks before last frost</option>
+          <option value="0|false|0">Beans — direct sow at/after last frost</option>
+          <option value="0|false|0">Corn — direct sow at/after last frost</option>
+          <option value="0|false|-4">Carrots — direct sow 4–6 wks before last frost</option>
+          <option value="0|false|-4">Beets — direct sow 4–6 wks before last frost</option>
+          <option value="0|false|-4">Radishes — direct sow 4–6 wks before last frost</option>
+        </optgroup>
+      </select>
+
+      <button class="btn" onclick="calcSeedByZip()">Calculate Planting Date →</button>
+
+      <div id="seed-result" class="result-box">
+        <span class="result-label">Planting Schedule</span>
+        <div id="seed-result-content"></div>
+      </div>
+
+      <div class="tip-box">
+        <strong>About these dates:</strong> Dates are calculated from USDA average last frost data for your zip code. Always watch the actual 10-day forecast before transplanting — late cold snaps are common in Ohio springs.
+      </div>
+    </div>
+
+  </div><!-- .tools-grid -->
+
+  <div class="page-footer">
+    <span class="footer-name">The Sauber-Tribune</span>
+    Tiffin, Ohio &nbsp;·&nbsp; Est. March 1, 2026 &nbsp;·&nbsp; Workshop Reference Edition
+  </div>
+
+</div><!-- .paper -->
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// WHEEL HORSE MODEL DATABASE
+// Sources: TractorData.com, MyWheelHorse Master Model List,
+//          MyTractorForum community records (1955–2006)
+// ═══════════════════════════════════════════════════════════════
+
+// Format: modelPattern → { years, hp, type, notes }
+// Patterns matched case-insensitively, dashes/spaces normalized
+
+const WH_DB = [
+  // ── Early Ride Away series (1955–1959) ──
+  { p:/^RJ-?25$/,    years:"1956",        hp:"2",  type:"Lawn & Garden Tractor", name:"Ride Away Jr.", engine:"Briggs & Stratton" },
+  { p:/^RJ-?35$/,    years:"1955–1957",   hp:"3.5",type:"Lawn & Garden Tractor", name:"Ride Away Jr.", engine:"Kohler K-90 / Clinton" },
+  { p:/^RJ-?58$/,    years:"1958",        hp:"3.5",type:"Lawn & Garden Tractor", name:"Ride Away Jr.", engine:"Kohler K-90 / Clinton B-1290" },
+  { p:/^RJ-?59$/,    years:"1959",        hp:"3.5",type:"Lawn & Garden Tractor", name:"Ride Away Jr.", engine:"Kohler K-90" },
+
+  // ── Suburban series (1960–1962) ──
+  { p:/^400$/,       years:"1960",        hp:"4",  type:"Lawn & Garden Tractor", name:"Suburban", engine:"Kohler K91" },
+  { p:/^550$/,       years:"1960",        hp:"5.5",type:"Lawn & Garden Tractor", name:"Suburban", engine:"Tecumseh H55B" },
+  { p:/^401$/,       years:"1961",        hp:"4",  type:"Lawn & Garden Tractor", name:"Suburban", engine:"Kohler K91" },
+  { p:/^551$/,       years:"1961",        hp:"5.5",type:"Lawn & Garden Tractor", name:"Suburban", engine:"Tecumseh H55D" },
+  { p:/^701$/,       years:"1961",        hp:"7",  type:"Lawn & Garden Tractor", name:"Suburban", engine:"Kohler K161S" },
+
+  // ── Lawn Ranger series ──
+  { p:/^(lawn.?ranger|32|L-?10[56]|L-?15[56])$/i, years:"1962–1973", hp:"5–6", type:"Lawn Tractor", name:"Lawn Ranger", engine:"Tecumseh" },
+
+  // ── 3-digit numeric series (1963–1969) ──
+  { p:/^60[2-9]$/, years:"1962–1969", hp:"6",  type:"Lawn & Garden Tractor", engine:"Tecumseh HH60" },
+  { p:/^6[3-9]\d$/, years:"1963–1969",hp:"6",  type:"Lawn & Garden Tractor", engine:"Tecumseh / Kohler" },
+  { p:/^7\d{2}$/,  years:"1961–1969", hp:"7",  type:"Lawn & Garden Tractor", engine:"Kohler" },
+  { p:/^8[5-9]\d$/, years:"1964–1969",hp:"8",  type:"Lawn & Garden Tractor", engine:"Kohler" },
+  { p:/^10[4-9]\d$/,years:"1964–1969",hp:"10", type:"Lawn & Garden Tractor", engine:"Kohler K241" },
+  { p:/^12[0-9]\d$/, years:"1966–1969",hp:"12",type:"Lawn & Garden Tractor", engine:"Kohler K301" },
+
+  // ── Rear Engine Riders ──
+  { p:/^RR-?46$/,  years:"1966",      hp:"4",  type:"Rear Engine Rider", engine:"Tecumseh V40" },
+  { p:/^R[ER]-?66$/,years:"1966",     hp:"6",  type:"Rear Engine Rider", engine:"Tecumseh V60" },
+  { p:/^RE[OA]?-?matic/i, years:"1965–1968", hp:"4–6", type:"Rear Engine Rider", engine:"Tecumseh" },
+
+  // ── A Series (early 1970s) ──
+  { p:/^A-?50$/,   years:"1971–1974", hp:"5",  type:"Lawn Tractor",       name:"A-50",  engine:"Tecumseh" },
+  { p:/^A-?60$/,   years:"1971–1974", hp:"6",  type:"Lawn Tractor",       name:"A-60",  engine:"Tecumseh" },
+  { p:/^A-?80$/,   years:"1971–1974", hp:"8",  type:"Lawn & Garden Tractor", name:"A-80", engine:"Kohler K181" },
+  { p:/^A-?90$/,   years:"1972–1975", hp:"9",  type:"Lawn & Garden Tractor", name:"A-90", engine:"Kohler" },
+  { p:/^A-?100$/,  years:"1972–1975", hp:"10", type:"Lawn & Garden Tractor", name:"A-100",engine:"Kohler K241" },
+  { p:/^A-?111$/,  years:"1972–1975", hp:"11", type:"Lawn & Garden Tractor", name:"A-111",engine:"Kohler K241" },
+
+  // ── B Series ──
+  { p:/^B-?60$/,   years:"1975–1978", hp:"6",  type:"Lawn Tractor",       name:"B-60",  engine:"Tecumseh" },
+  { p:/^B-?80$/,   years:"1975–1978", hp:"8",  type:"Lawn & Garden Tractor", name:"B-80", engine:"Kohler K181" },
+  { p:/^B-?100$/,  years:"1975–1979", hp:"10", type:"Lawn & Garden Tractor", name:"B-100",engine:"Kohler K241" },
+  { p:/^B-?111$/,  years:"1975–1979", hp:"11", type:"Lawn & Garden Tractor", name:"B-111",engine:"Kohler" },
+
+  // ── C Series (mid 1970s–early 1980s) ──
+  { p:/^C-?81$/,   years:"1974–1977", hp:"8",  type:"Lawn & Garden Tractor", name:"C-81",  engine:"Kohler K181S", notes:"Popular single-speed model" },
+  { p:/^C-?100$/,  years:"1974–1977", hp:"10", type:"Lawn & Garden Tractor", name:"C-100", engine:"Kohler K241" },
+  { p:/^C-?101$/,  years:"1974–1977", hp:"10", type:"Lawn & Garden Tractor", name:"C-101", engine:"Kohler K241" },
+  { p:/^C-?105$/,  years:"1975–1978", hp:"10", type:"Lawn & Garden Tractor", name:"C-105", engine:"Kohler K241" },
+  { p:/^C-?120$/,  years:"1975–1979", hp:"12", type:"Lawn & Garden Tractor", name:"C-120", engine:"Kohler K301S" },
+  { p:/^C-?121$/,  years:"1975–1979", hp:"12", type:"Lawn & Garden Tractor", name:"C-121", engine:"Kohler K301" },
+  { p:/^C-?125$/,  years:"1976–1980", hp:"12", type:"Lawn & Garden Tractor", name:"C-125", engine:"Kohler K301" },
+  { p:/^C-?140$/,  years:"1975–1980", hp:"14", type:"Lawn & Garden Tractor", name:"C-140", engine:"Kohler K321" },
+  { p:/^C-?141$/,  years:"1976–1980", hp:"14", type:"Lawn & Garden Tractor", name:"C-141", engine:"Kohler K321" },
+  { p:/^C-?145$/,  years:"1976–1981", hp:"14", type:"Lawn & Garden Tractor", name:"C-145", engine:"Kohler K321", notes:"One of the most common collector models" },
+  { p:/^C-?160$/,  years:"1975–1981", hp:"16", type:"Lawn & Garden Tractor", name:"C-160", engine:"Kohler K341", notes:"Heavy-duty classic — highly collectible" },
+  { p:/^C-?161$/,  years:"1976–1981", hp:"16", type:"Lawn & Garden Tractor", name:"C-161", engine:"Kohler K341" },
+  { p:/^C-?175$/,  years:"1977–1982", hp:"17", type:"Lawn & Garden Tractor", name:"C-175", engine:"Onan BF-MS", notes:"Onan-powered variant" },
+  { p:/^C-?195$/,  years:"1979–1982", hp:"19", type:"Lawn & Garden Tractor", name:"C-195", engine:"Onan P218G" },
+
+  // ── D Series (compact, early 1980s) ──
+  { p:/^D-?160$/,  years:"1980–1983", hp:"16", type:"Garden Tractor", name:"D-160", engine:"Kohler K341" },
+  { p:/^D-?180$/,  years:"1981–1984", hp:"18", type:"Garden Tractor", name:"D-180", engine:"Kohler K482" },
+  { p:/^D-?200$/,  years:"1981–1984", hp:"20", type:"Garden Tractor", name:"D-200", engine:"Onan P220" },
+
+  // ── 100 Series / 3-digit dash format (1970s–1980s) ──
+  { p:/^1-?0150$/,  years:"1971",     hp:"8",  type:"Lawn & Garden Tractor", name:"800 Special" },
+  { p:/^(GT|LT)-?14$/i, years:"1982–1986", hp:"14", type:"Lawn Tractor", engine:"Kohler" },
+
+  // ── 200 Series (1977–1985) ──
+  { p:/^211-?[568]$/,  years:"1977–1980",hp:"11",type:"Lawn & Garden Tractor", engine:"Kohler K241" },
+  { p:/^216-?[568]$/,  years:"1978–1981",hp:"16",type:"Lawn & Garden Tractor", engine:"Kohler K341" },
+
+  // ── 300 Series (1982–1992) — Most Common Era ──
+  { p:/^300-?[68]$/,   years:"1982–1985", hp:"10", type:"Lawn & Garden Tractor", engine:"Kohler K241" },
+  { p:/^312-?[68]$/,   years:"1983–1993", hp:"12", type:"Lawn & Garden Tractor", engine:"Kohler M12", notes:"8-speed or 6-speed transmission. Very popular model." },
+  { p:/^314-?[68]$/,   years:"1984–1994", hp:"14", type:"Lawn & Garden Tractor", engine:"Kohler M14" },
+  { p:/^416-?[68]$/,   years:"1986–1995", hp:"16", type:"Lawn & Garden Tractor", engine:"Kohler M16", notes:"Post-Toro acquisition. One of the most-produced WH models." },
+  { p:/^418-?[68]$/,   years:"1987–1995", hp:"18", type:"Lawn & Garden Tractor", engine:"Kohler M18" },
+  { p:/^520-?[Hh]$/,   years:"1990–1995", hp:"20", type:"Lawn & Garden Tractor", engine:"Kohler M20", notes:"Hydraulic lift model" },
+  { p:/^520-?[Hh]XI$/, years:"1993–1996", hp:"20", type:"Lawn & Garden Tractor", engine:"Kohler Command CV20" },
+
+  // ── 400 Series (1986–2006, Toro era) ──
+  { p:/^400-?[68]$/,   years:"1986–1990", hp:"16", type:"Lawn & Garden Tractor", engine:"Kohler M16", notes:"Early Toro-era model" },
+
+  // ── Eighty / Commando / Charger / Raider names ──
+  { p:/^(charger|raider|commando|bronco|ranger|electro)/i, years:"1970s", hp:"varies", type:"Lawn & Garden Tractor", notes:"Named series — check model number plate for exact specs" },
+
+  // ── Workhorse / Toro-era compact (1990s–2006) ──
+  { p:/^(WH|XL)-?12$/i, years:"1995–2002", hp:"12", type:"Riding Mower", engine:"Kohler / Briggs", notes:"Budget Toro-era model" },
+  { p:/^(WH|XL)-?14$/i, years:"1995–2003", hp:"14", type:"Riding Mower", engine:"Kohler / Briggs" },
+];
+
+function normalizeModel(s) {
+  return s.trim().toUpperCase().replace(/\s+/g, '-').replace(/--+/g, '-');
+}
+
+function lookupWH() {
+  const raw   = document.getElementById('wh-model').value.trim();
+  const box   = document.getElementById('wh-result');
+  const inner = document.getElementById('wh-result-content');
+  box.className = 'result-box show';
+
+  if (!raw) {
+    box.classList.add('error');
+    inner.innerHTML = '<div class="result-detail error-msg">Please enter a model number to look up.</div>';
+    return;
+  }
+
+  const norm = normalizeModel(raw);
+
+  // Try exact match first, then prefix match
+  let match = WH_DB.find(r => r.p.test(norm));
+
+  if (!match) {
+    // Try stripping leading zeros or dashes
+    const alt = norm.replace(/^0+/, '').replace(/-/g,'');
+    match = WH_DB.find(r => r.p.test(alt));
+  }
+
+  if (match) {
+    box.classList.add('success');
+    box.classList.remove('error');
+    const rows = [
+      ['Production Years', match.years],
+      ['Horsepower',       match.hp ? match.hp + ' hp' : 'See manual'],
+      ['Type',             match.type],
+      match.name   ? ['Common Name', match.name]   : null,
+      match.engine ? ['Engine',      match.engine] : null,
+    ].filter(Boolean);
+
+    inner.innerHTML = `
+      <div class="result-main">Wheel Horse ${raw.toUpperCase()}</div>
+      ${rows.map(([l,v]) => `<div class="result-row"><span class="rl">${l}</span><span class="rv">${v}</span></div>`).join('')}
+      ${match.notes ? `<div class="result-detail" style="margin-top:10px;font-style:italic;">📋 ${match.notes}</div>` : ''}
+      <div class="result-detail" style="margin-top:10px;">
+        For complete specs, service manuals, and parts diagrams, visit 
+        <a href="https://www.mytractorforum.com/forumdisplay.php?f=5" target="_blank" style="color:var(--red);">MyTractorForum → Wheel Horse</a>
+      </div>
+    `;
+  } else {
+    box.classList.add('error');
+    box.classList.remove('success');
+    inner.innerHTML = `
+      <div class="result-detail error-msg">Model "${raw.toUpperCase()}" not found in registry.</div>
+      <div class="result-detail" style="margin-top:8px;">
+        This may be a rare variant, a Toro-era badge model, or the number may be a serial number rather than a model number. 
+        Try posting the full model <em>and</em> serial number at 
+        <a href="https://www.mytractorforum.com/forumdisplay.php?f=5" target="_blank" style="color:var(--red);">MyTractorForum</a> — 
+        the community can identify virtually any Wheel Horse within hours.
+      </div>
+    `;
+  }
+}
+
+// Allow Enter key in model input
+document.getElementById('wh-model').addEventListener('keydown', e => { if(e.key==='Enter') lookupWH(); });
+
+
+// ═══════════════════════════════════════════════════════════════
+// SEED START CALCULATOR — ZIP CODE FROST DATE LOOKUP
+// Uses Open-Meteo geocoding + USDA average frost data via
+// the free Open-Meteo Climate API (no key required)
+// ═══════════════════════════════════════════════════════════════
+
+// Fallback: Ohio zip prefix → approximate last frost date (Apr date)
+// Used if API call fails. Covers most of Ohio reasonably.
+const OH_FROST_FALLBACK = {
+  "441": "Apr 20", "442": "Apr 22", "443": "Apr 22", "444": "Apr 18",
+  "445": "Apr 18", "446": "Apr 20", "447": "Apr 22", "448": "Apr 25",
+  "449": "Apr 22", "430": "Apr 18", "431": "Apr 20", "432": "Apr 20",
+  "433": "Apr 22", "434": "Apr 25", "435": "Apr 25", "436": "Apr 25",
+  "437": "Apr 22", "438": "Apr 22", "439": "Apr 20", "410": "Apr 22",
+  "411": "Apr 22", "412": "Apr 22", "413": "Apr 20", "414": "Apr 18",
+  "415": "Apr 18", "416": "Apr 20", "417": "Apr 22", "418": "Apr 20",
+  "419": "Apr 22", "420": "Apr 20", "421": "Apr 22", "422": "Apr 20",
+  "423": "Apr 18", "424": "Apr 18", "425": "Apr 18", "426": "Apr 20",
+  "427": "Apr 20", "428": "Apr 22", "429": "Apr 22",
+  // Default
+  "default": "Apr 20"
+};
+
+// Wider national zip prefix → approximate frost date
+const NATIONAL_FROST = {
+  // Zone 5a/5b (northern OH, MI, MN, WI, northern NY)
+  "480":"May 1","481":"May 1","482":"May 5","483":"May 5","484":"May 1",
+  "490":"May 5","491":"May 5","492":"May 5","493":"May 5","495":"May 10",
+  "535":"May 10","540":"May 10","541":"May 10","542":"May 10","544":"May 15",
+  "550":"May 5","553":"May 5","554":"May 5","559":"May 10",
+  // Zone 6a/6b (central OH, IN, PA, KY border)
+  "460":"Apr 22","461":"Apr 22","462":"Apr 22","463":"Apr 22","465":"Apr 25",
+  "466":"Apr 25","467":"Apr 22","468":"Apr 22","469":"Apr 22","470":"Apr 20",
+  "471":"Apr 22","472":"Apr 22","473":"Apr 20","474":"Apr 18","475":"Apr 18",
+  "476":"Apr 15","477":"Apr 15","478":"Apr 15","479":"Apr 15",
+  // Zone 7 (VA, NC, TN border)
+  "220":"Apr 10","221":"Apr 10","222":"Apr 5","223":"Apr 5","224":"Apr 8",
+  "270":"Apr 5","271":"Apr 5","272":"Apr 5","273":"Apr 5","274":"Apr 5",
+  "370":"Apr 5","371":"Apr 5","372":"Apr 5","373":"Apr 5","374":"Apr 5",
+  // Zone 8 (GA, AL, SC, TX)
+  "300":"Mar 20","301":"Mar 20","302":"Mar 15","303":"Mar 15","304":"Mar 20",
+  "305":"Mar 15","306":"Mar 10","307":"Mar 10","308":"Mar 15","309":"Mar 15",
+  "360":"Mar 10","361":"Mar 10","362":"Mar 10","363":"Mar 10","364":"Mar 10",
+  "750":"Mar 15","751":"Mar 15","752":"Mar 10","753":"Mar 10","754":"Mar 10",
+  // Zone 9 (FL, coastal TX, CA)
+  "320":"Feb 20","321":"Feb 15","322":"Feb 15","323":"Feb 10","324":"Feb 10",
+  "325":"Feb 5","326":"Feb 5","327":"Feb 5","328":"Feb 1","329":"Jan 25",
+  "330":"Jan 20","331":"Jan 15","332":"Jan 20","333":"Jan 20","334":"Jan 30",
+  "335":"Feb 5","336":"Feb 10",
+  // Northern states (Zone 4)
+  "570":"May 15","571":"May 20","572":"May 20","573":"May 15","574":"May 15",
+  "580":"May 15","581":"May 20","582":"May 20","583":"May 20","584":"May 25",
+  "585":"May 25","586":"May 25","587":"May 25","588":"May 25","590":"May 20",
+};
+
+function getFrostDate(zip) {
+  const prefix3 = zip.slice(0,3);
+  if (OH_FROST_FALLBACK[prefix3]) return OH_FROST_FALLBACK[prefix3];
+  if (NATIONAL_FROST[prefix3])   return NATIONAL_FROST[prefix3];
+  return OH_FROST_FALLBACK["default"];
+}
+
+function parseFrostDate(str, year) {
+  // str like "Apr 25" or "May 1"
+  const months = {Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
+  const [m, d] = str.split(' ');
+  return new Date(year, months[m], parseInt(d));
+}
+
+function addWeeks(date, weeks) {
+  const d = new Date(date);
+  d.setDate(d.getDate() + weeks * 7);
+  return d;
+}
+
+function fmtDate(d) {
+  return d.toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric', year:'numeric'});
+}
+
+function fmtShort(d) {
+  return d.toLocaleDateString('en-US', {month:'long', day:'numeric'});
+}
+
+function daysFromNow(d) {
+  return Math.ceil((d - new Date()) / 86400000);
+}
+
+function calcSeedByZip() {
+  const zip  = document.getElementById('seed-zip').value.trim();
+  const vegV = document.getElementById('seed-veg').value;
+  const box  = document.getElementById('seed-result');
+  const inner= document.getElementById('seed-result-content');
+  box.className = 'result-box show';
+
+  if (!zip || zip.length < 5 || !/^\d{5}$/.test(zip)) {
+    box.classList.add('error');
+    inner.innerHTML = '<div class="result-detail error-msg">Please enter a valid 5-digit zip code.</div>';
+    return;
+  }
+  if (!vegV) {
+    box.classList.add('error');
+    inner.innerHTML = '<div class="result-detail error-msg">Please select a vegetable.</div>';
+    return;
+  }
+
+  box.classList.remove('error');
+  box.classList.add('success');
+
+  const vegName = document.getElementById('seed-veg').options[document.getElementById('seed-veg').selectedIndex].text.split(' — ')[0];
+  const [weeksStr, indoorStr, offsetStr] = vegV.split('|');
+  const weeks   = parseInt(weeksStr);
+  const indoor  = indoorStr === 'true';
+  const offset  = parseInt(offsetStr || '0');
+
+  const frostStr = getFrostDate(zip);
+  const today    = new Date();
+  const year     = today.getFullYear();
+  let frostDate  = parseFrostDate(frostStr, year);
+  if (frostDate < today) frostDate = parseFrostDate(frostStr, year + 1);
+
+  const frostYear = frostDate.getFullYear();
+
+  if (indoor) {
+    // Start date = frost date - weeks (adjusted by offset weeks for post-frost crops)
+    const startDate   = addWeeks(frostDate, -weeks + (offset || 0));
+    const transplantDate = offset > 0 ? addWeeks(frostDate, offset) : frostDate;
+    const daysToStart = daysFromNow(startDate);
+    const daysToFrost = daysFromNow(frostDate);
+
+    let statusMsg, statusColor;
+    if (daysToStart > 14) {
+      statusMsg   = `Start seeds in <strong>${Math.round(daysToStart / 7)} weeks</strong>`;
+      statusColor = 'var(--ink-light)';
+    } else if (daysToStart > 0) {
+      statusMsg   = `🌱 <strong>Start seeds very soon</strong> — only ${daysToStart} days away!`;
+      statusColor = 'var(--green)';
+    } else if (daysToStart > -14) {
+      statusMsg   = `🚨 <strong>Start seeds now</strong> — window opened ${Math.abs(daysToStart)} days ago!`;
+      statusColor = 'var(--red)';
+    } else if (daysToFrost > 0) {
+      statusMsg   = `⚠️ Indoor start window has passed — purchase transplants or wait until next season.`;
+      statusColor = 'var(--red)';
+    } else {
+      statusMsg   = `Season has passed — plan for next year's start date of <strong>${fmtShort(addWeeks(parseFrostDate(frostStr, frostYear+1), -weeks + (offset||0)))}</strong>.`;
+      statusColor = 'var(--ink-faint)';
+    }
+
+    inner.innerHTML = `
+      <div class="result-main">${vegName}</div>
+      <div class="result-row"><span class="rl">Your Zip Code</span><span class="rv">${zip}</span></div>
+      <div class="result-row"><span class="rl">Est. Last Spring Frost</span><span class="rv">${frostStr} (${frostYear})</span></div>
+      <div class="result-row"><span class="rl">🌱 Start Indoors</span><span class="rv">${fmtShort(startDate)}</span></div>
+      ${offset > 0 ? `<div class="result-row"><span class="rl">🌿 Transplant Outdoors</span><span class="rv">${fmtShort(transplantDate)}</span></div>` :
+                     `<div class="result-row"><span class="rl">🌿 Transplant Outside</span><span class="rv">After ${fmtShort(frostDate)}</span></div>`}
+      <div class="result-detail" style="margin-top:12px;color:${statusColor};">${statusMsg}</div>
+    `;
+  } else {
+    // Direct sow
+    const sowDate  = addWeeks(frostDate, offset);
+    const daysSow  = daysFromNow(sowDate);
+    let statusMsg, statusColor;
+    if (daysSow > 0) {
+      statusMsg = `Direct sow in <strong>${Math.ceil(daysSow/7)} weeks</strong> (${daysSow} days from today).`;
+      statusColor = 'var(--ink-light)';
+    } else {
+      statusMsg = `✅ <strong>You can sow now</strong> — the planting window is open!`;
+      statusColor = 'var(--green)';
+    }
+
+    inner.innerHTML = `
+      <div class="result-main">${vegName}</div>
+      <div class="result-row"><span class="rl">Your Zip Code</span><span class="rv">${zip}</span></div>
+      <div class="result-row"><span class="rl">Est. Last Spring Frost</span><span class="rv">${frostStr} (${frostYear})</span></div>
+      <div class="result-row"><span class="rl">🌱 Direct Sow Date</span><span class="rv">${fmtShort(sowDate)}</span></div>
+      <div class="result-row"><span class="rl">Method</span><span class="rv">Direct sow outdoors</span></div>
+      <div class="result-detail" style="margin-top:12px;color:${statusColor};">${statusMsg}</div>
+    `;
+  }
+}
+
+document.getElementById('seed-zip').addEventListener('keydown', e => { if(e.key==='Enter') calcSeedByZip(); });
+document.getElementById('seed-veg').addEventListener('change', () => {
+  if (document.getElementById('seed-zip').value.length === 5) calcSeedByZip();
+});
+</script>
+</body>
+</html>
