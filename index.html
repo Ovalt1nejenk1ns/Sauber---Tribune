@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Homestead Gazette | Est. 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Playfair+Display+SC:wght@400;700&family=IM+Fell+English:ital@0;1&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper:#f2e8d5;--paper-dark:#e8d9bc;--ink:#1a1208;--ink-light:#3d2e18;
+      --ink-faint:#6b5740;--rule:#2a1e0e;--red:#8b1a1a;--gold:#7a5c1e;--col-gap:22px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'IM Fell English',Georgia,serif;background:#c8b89a;color:var(--ink);min-height:100vh;padding:20px;}
+    .paper{max-width:1280px;margin:0 auto;background-color:var(--paper);background-image:repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(0,0,0,0.018) 28px,rgba(0,0,0,0.018) 29px);box-shadow:0 4px 40px rgba(0,0,0,0.45);}
+    .masthead{border-bottom:6px double var(--rule);padding:18px 36px 14px;text-align:center;}
+    .masthead-top{display:flex;justify-content:space-between;align-items:center;font-family:'Courier Prime',monospace;font-size:0.68em;color:var(--ink-faint);border-bottom:1px solid var(--rule);padding-bottom:8px;margin-bottom:10px;letter-spacing:0.04em;}
+    .masthead-top .price{border:1px solid var(--ink-faint);padding:1px 8px;}
+    .masthead-title{font-family:'UnifrakturMaguntia',cursive;font-size:clamp(3em,8vw,6.5em);line-height:0.9;color:var(--ink);text-shadow:2px 2px 0 rgba(0,0,0,0.12);}
+    .masthead-subtitle{font-family:'Playfair Display SC',serif;font-size:0.72em;letter-spacing:0.35em;color:var(--ink-light);margin:6px 0 10px;text-transform:uppercase;}
+    .masthead-rule-block{display:flex;align-items:center;gap:14px;margin-bottom:8px;}
+    .masthead-rule-block hr{flex:1;border:none;border-top:1px solid var(--rule);}
+    .masthead-rule-block span{font-family:'Playfair Display SC',serif;font-size:0.65em;letter-spacing:0.2em;color:var(--ink-faint);white-space:nowrap;}
+    .section-nav{background:var(--ink);display:flex;justify-content:center;flex-wrap:wrap;border-bottom:3px solid var(--rule);position:sticky;top:0;z-index:100;}
+    .section-nav button{background:none;border:none;border-right:1px solid rgba(255,255,255,0.15);padding:11px 22px;cursor:pointer;font-family:'Playfair Display SC',serif;font-size:0.72em;letter-spacing:0.12em;color:var(--paper-dark);transition:all 0.15s;}
+    .section-nav button:last-child{border-right:none;}
+    .section-nav button:hover{background:rgba(255,255,255,0.08);color:#fff;}
+    .section-nav button.active{background:var(--red);color:#fff;}
+    .page-body{padding:28px 36px 60px;}
+    .section-page{display:none;animation:appear 0.3s ease;}
+    .section-page.active{display:block;}
+    @keyframes appear{from{opacity:0;}to{opacity:1;}}
+    .section-banner{text-align:center;border-top:4px solid var(--rule);border-bottom:4px double var(--rule);padding:10px 0 8px;margin-bottom:24px;}
+    .section-banner .kicker{font-family:'Playfair Display SC',serif;font-size:0.62em;letter-spacing:0.3em;color:var(--red);display:block;margin-bottom:4px;}
+    .section-banner h2{font-family:'Playfair Display',serif;font-size:clamp(1.8em,4vw,3em);font-weight:900;line-height:1;color:var(--ink);}
+    .section-banner .deck{font-family:'IM Fell English',serif;font-style:italic;font-size:0.92em;color:var(--ink-light);margin-top:5px;}
+    .cols-2{display:grid;grid-template-columns:1fr 1fr;gap:0;}
+    .cols-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;}
+    .cols-2-1{display:grid;grid-template-columns:2fr 1fr;gap:0;}
+    .col{padding:0 var(--col-gap);border-right:1px solid var(--rule);}
+    .col:first-child{padding-left:0;}
+    .col:last-child{border-right:none;padding-right:0;}
+    .rule-single{border:none;border-top:1px solid var(--rule);margin:18px 0;}
+    .rule-double{border:none;border-top:4px double var(--rule);margin:22px 0;}
+    .hl-xl{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(1.6em,3vw,2.5em);line-height:1.05;color:var(--ink);margin-bottom:10px;}
+    .hl-lg{font-family:'Playfair Display',serif;font-weight:700;font-size:1.4em;line-height:1.1;color:var(--ink);margin-bottom:8px;}
+    .hl-md{font-family:'Playfair Display',serif;font-weight:700;font-size:1.1em;line-height:1.2;color:var(--ink);margin-bottom:6px;}
+    .hl-sm{font-family:'Playfair Display SC',serif;font-size:0.78em;letter-spacing:0.08em;color:var(--ink);margin-bottom:4px;}
+    .byline{font-family:'Courier Prime',monospace;font-size:0.68em;letter-spacing:0.1em;color:var(--ink-faint);text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+    .byline::before,.byline::after{content:'—';}
+    p{font-size:0.92em;line-height:1.72;color:var(--ink-light);margin-bottom:10px;text-align:justify;hyphens:auto;}
+    p:first-of-type::first-letter{font-family:'Playfair Display',serif;font-size:3.4em;font-weight:900;float:left;line-height:0.75;margin:4px 6px -2px 0;color:var(--ink);}
+    .no-dropcap p:first-of-type::first-letter,.no-dropcap p{all:unset;font-family:'IM Fell English',Georgia,serif;font-size:0.88em;line-height:1.65;color:var(--ink-light);display:block;margin-bottom:8px;}
+    .pull-quote{border-top:3px solid var(--rule);border-bottom:3px solid var(--rule);padding:14px 0;margin:18px 0;text-align:center;}
+    .pull-quote p{font-family:'Playfair Display',serif;font-size:1.05em!important;font-style:italic;font-weight:700;color:var(--ink)!important;text-align:center;line-height:1.4;margin:0;}
+    .pull-quote p::first-letter{all:unset;font-family:'Playfair Display',serif;}
+    .classified-block{background:var(--paper-dark);border:2px solid var(--rule);padding:14px 16px;margin-bottom:14px;}
+    .classified-block .c-head{font-family:'Playfair Display SC',serif;font-size:0.75em;letter-spacing:0.12em;color:var(--red);border-bottom:1px solid var(--ink-faint);padding-bottom:5px;margin-bottom:10px;}
+    .classified-item{padding:7px 0;border-bottom:1px dotted var(--ink-faint);display:flex;justify-content:space-between;align-items:baseline;gap:12px;}
+    .classified-item:last-child{border-bottom:none;padding-bottom:0;}
+    .classified-item .c-name{font-family:'Playfair Display',serif;font-weight:700;font-size:0.82em;color:var(--ink);flex-shrink:0;}
+    .classified-item .c-dots{flex:1;border-bottom:1px dotted var(--ink-faint);margin:0 6px;position:relative;top:-3px;}
+    .classified-item a{font-family:'Courier Prime',monospace;font-size:0.7em;color:var(--red);text-decoration:none;letter-spacing:0.04em;flex-shrink:0;}
+    .classified-item a:hover{text-decoration:underline;}
+    .classified-item .c-desc{display:block;font-size:0.78em;font-style:italic;color:var(--ink-faint);margin-top:2px;}
+    .advert{border:3px double var(--rule);padding:16px 14px;text-align:center;margin:14px 0;background:var(--paper-dark);}
+    .advert .ad-kicker{font-family:'Playfair Display SC',serif;font-size:0.58em;letter-spacing:0.25em;color:var(--ink-faint);display:block;margin-bottom:4px;}
+    .advert h3{font-family:'Playfair Display',serif;font-weight:900;font-size:1.2em;line-height:1.1;margin-bottom:6px;}
+    .advert p{font-size:0.78em!important;text-align:center;margin-bottom:8px;color:var(--ink-light);}
+    .advert p::first-letter{all:unset;}
+    .advert a{display:inline-block;border:1px solid var(--rule);font-family:'Courier Prime',monospace;font-size:0.7em;letter-spacing:0.1em;padding:4px 14px;color:var(--ink);text-decoration:none;}
+    .advert a:hover{background:var(--ink);color:var(--paper);}
+    .season-box{border:1px solid var(--rule);padding:12px 14px;margin-bottom:12px;}
+    .season-box h4{font-family:'Playfair Display SC',serif;font-size:0.78em;letter-spacing:0.1em;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--rule);}
+    .season-box ul{list-style:none;}
+    .season-box ul li{font-size:0.82em;padding:3px 0;color:var(--ink-light);border-bottom:1px dotted var(--ink-faint);}
+    .season-box ul li:last-child{border:none;}
+    .season-box ul li::before{content:'✦ ';font-size:0.7em;color:var(--red);}
+    .checklist{list-style:none;}
+    .checklist li{font-size:0.85em;padding:5px 0;border-bottom:1px dotted var(--ink-faint);color:var(--ink-light);line-height:1.4;}
+    .checklist li:last-child{border:none;}
+    .checklist li::before{content:'□ ';color:var(--ink);}
+    .flag{display:inline-block;background:var(--red);color:var(--paper);font-family:'Playfair Display SC',serif;font-size:0.62em;letter-spacing:0.15em;padding:2px 10px;margin-bottom:8px;}
+    .flag-black{display:inline-block;background:var(--ink);color:var(--paper);font-family:'Playfair Display SC',serif;font-size:0.62em;letter-spacing:0.15em;padding:2px 10px;margin-bottom:8px;}
+    .article{margin-bottom:20px;}
+    .newspaper-footer{border-top:4px double var(--rule);padding:14px 36px;display:flex;justify-content:space-between;align-items:center;background:var(--paper-dark);}
+    .newspaper-footer p{font-family:'Courier Prime',monospace;font-size:0.68em;color:var(--ink-faint);letter-spacing:0.06em;text-align:left;margin:0;}
+    .newspaper-footer p::first-letter{all:unset;}
+    .newspaper-footer .footer-title{font-family:'UnifrakturMaguntia',cursive;font-size:1.6em;color:var(--ink);}
+    @media(max-width:800px){
+      body{padding:0;}
+      .paper{box-shadow:none;}
+      .page-body{padding:16px 20px 40px;}
+      .masthead{padding:14px 20px 12px;}
+      .cols-2,.cols-3,.cols-2-1{grid-template-columns:1fr;}
+      .col{padding:0;border-right:none;border-bottom:1px solid var(--rule);padding-bottom:18px;margin-bottom:18px;}
+      .col:last-child{border-bottom:none;}
+      .newspaper-footer{flex-direction:column;gap:8px;text-align:center;padding:16px;}
+      .section-nav button{padding:10px 14px;font-size:0.65em;}
+    }
+  </style>
+</head>
+<body>
+<div class="paper">
+
+<header class="masthead">
+  <div class="masthead-top">
+    <span>Vol. I &nbsp;·&nbsp; No. 1</span>
+    <span>Sunday Morning Edition &nbsp;·&nbsp; Central Ohio</span>
+    <span class="price">Free of Charge</span>
+  </div>
+  <div class="masthead-title">The Homestead Gazette</div>
+  <div class="masthead-subtitle">Woodworking &nbsp;·&nbsp; Gardening &nbsp;·&nbsp; Wheel Horse &nbsp;·&nbsp; Auctions</div>
+  <div class="masthead-rule-block"><hr><span>"Devoted to the Honest Labors of the Homestead"</span><hr></div>
+  <div style="font-family:'Courier Prime',monospace;font-size:0.68em;color:var(--ink-faint);letter-spacing:0.06em;">Established March 1, 2026 &nbsp;·&nbsp; Hilliard, Ohio, U.S.A.</div>
+</header>
+
+<nav class="section-nav">
+  <button class="active" data-section="front">Front Page</button>
+  <button data-section="woodworking">Woodworking</button>
+  <button data-section="gardening">Gardening</button>
+  <button data-section="tractors">Wheel Horse</button>
+  <button data-section="auctions">Auctions</button>
+  <button data-section="directory">Full Directory</button>
+</nav>
+
+<main class="page-body">
+
+<!-- FRONT PAGE -->
+<div class="section-page active" id="front">
+  <div class="section-banner">
+    <span class="kicker">Sunday, March 1st, 2026</span>
+    <h2>All the News of Field, Shop &amp; Saleyard</h2>
+    <div class="deck">Your comprehensive guide to the finest homestead pursuits in Central Ohio and beyond</div>
+  </div>
+  <div class="cols-2-1">
+    <div class="col">
+      <div class="flag">Top Story</div>
+      <h1 class="hl-xl">Spring Arrives: The Season of Greatest Promise for Garden &amp; Workshop Alike</h1>
+      <div class="byline">Staff Correspondent</div>
+      <p>With the arrival of March, the industrious homesteader finds himself pulled in most agreeable directions simultaneously. The garden beds call for preparation, the Wheel Horse emerges from its winter slumber requiring careful inspection, the workshop fills again with the fragrant smell of fresh lumber, and the auction season stirs to life with the promise of remarkable finds.</p>
+      <p>The wise steward of land and shop understands that each season imposes its own logic upon the calendar. Now is the time to start tomatoes and peppers indoors — some six to eight weeks before the last frost expected around the fifteenth of April — and to survey one's inventory of tools and seed.</p>
+      <div class="pull-quote"><p>"The garden that is not planned in winter is already half-lost by summer."</p></div>
+      <p>For those possessed of a Wheel Horse tractor, spring service is not merely advisable but essential. Carburetors left untended through the cold months develop varnish in their passages; belts stretch and crack; batteries discharge themselves into uselessness. A morning spent in diligent attention now is worth a week of frustration come cutting season.</p>
+    </div>
+    <div class="col">
+      <div class="flag-black">What to Do This Season</div>
+      <div class="season-box"><h4>🌸 Spring Tasks</h4><ul><li>Start tomatoes &amp; peppers indoors</li><li>Prepare &amp; amend garden beds</li><li>Plant peas, lettuce, spinach outside</li><li>Full Wheel Horse pre-season service</li><li>Scout spring equipment auctions</li><li>Sharpen and set all edge tools</li></ul></div>
+      <div class="season-box"><h4>☀️ Summer Tasks</h4><ul><li>Consistent watering; apply mulch</li><li>Harvest cool-weather crops</li><li>Watch for pests, stake tomatoes</li><li>Attend farm &amp; estate auctions</li><li>Shop wood while supplies are fresh</li></ul></div>
+      <div class="season-box"><h4>🍂 Autumn Tasks</h4><ul><li>Plant garlic &amp; perennial bulbs</li><li>Cover crop and add compost</li><li>Estate auction season reaches peak</li><li>Winterize tractor for storage</li></ul></div>
+      <div class="season-box"><h4>❄️ Winter Tasks</h4><ul><li>Plan next year's garden layout</li><li>Order seeds before popular varieties sell</li><li>Workshop time — work large projects</li><li>Research online auctions for spring</li></ul></div>
+    </div>
+  </div>
+  <hr class="rule-double">
+  <div class="cols-3">
+    <div class="col article">
+      <div class="flag">Woodworking</div>
+      <h2 class="hl-lg">The Guild Recommends: Resources for Every Skill</h2>
+      <div class="byline">Craftsmen's Desk</div>
+      <p>For those seeking to advance their command of timber and joinery, few resources prove more reliable than the Wood Whisperer, whose YouTube instruction covers furniture builds and hand techniques with uncommon clarity. Stumpy Nubs furnishes the practical shop wisdom, and Paul Sellers the classical hand-tool tradition.</p>
+      <p style="text-align:center;margin-top:12px;"><a href="#" onclick="document.querySelector('[data-section=woodworking]').click();return false;" style="font-family:'Playfair Display SC',serif;font-size:0.72em;letter-spacing:0.1em;color:var(--red);text-decoration:none;">Continue on Page 2 →</a></p>
+    </div>
+    <div class="col article">
+      <div class="flag">Gardening</div>
+      <h2 class="hl-lg">Ohio Zone 6a: Planting Guide for the Central Columbus Region</h2>
+      <div class="byline">Garden Correspondent</div>
+      <p>Gardeners situated in the Hilliard and Columbus environs find themselves in USDA Hardiness Zone 6a, a circumstance that sets the last frost about the fifteenth of April and the first autumn frost around mid-October. This compact growing window rewards careful planning.</p>
+      <p style="text-align:center;margin-top:12px;"><a href="#" onclick="document.querySelector('[data-section=gardening]').click();return false;" style="font-family:'Playfair Display SC',serif;font-size:0.72em;letter-spacing:0.1em;color:var(--red);text-decoration:none;">Continue on Page 3 →</a></p>
+    </div>
+    <div class="col article">
+      <div class="flag">Auctions</div>
+      <h2 class="hl-lg">Spring Auction Season Opens Across Central Ohio</h2>
+      <div class="byline">Saleyard Reporter</div>
+      <p>The warming of the season brings a resurgence of auction activity across the Ohio countryside. Estate administrators, farmers modernizing equipment, and families settling affairs all contribute tools, garden implements, vintage machinery, and antiques coming to the block.</p>
+      <p style="text-align:center;margin-top:12px;"><a href="#" onclick="document.querySelector('[data-section=auctions]').click();return false;" style="font-family:'Playfair Display SC',serif;font-size:0.72em;letter-spacing:0.1em;color:var(--red);text-decoration:none;">Continue on Page 5 →</a></p>
+    </div>
+  </div>
+  <hr class="rule-double">
+  <div class="cols-2">
+    <div class="col article">
+      <div class="flag">Wheel Horse</div>
+      <h2 class="hl-lg">The Enduring Legacy of South Bend's Finest Garden Tractor</h2>
+      <div class="byline">Mechanical Correspondent</div>
+      <p>Few machines inspire the devotion lavished upon the Wheel Horse tractor, manufactured in South Bend, Indiana from 1946 through the Toro acquisition of 1986 and continued until 2006. Their reputation for robust over-engineering has earned them a passionate community of restorers and collectors who trade parts, share diagrams, and celebrate these venerable machines with uncommon enthusiasm. MyTractorForum's Wheel Horse section stands as the foremost gathering place for such enthusiasts.</p>
+      <p style="text-align:center;margin-top:12px;"><a href="#" onclick="document.querySelector('[data-section=tractors]').click();return false;" style="font-family:'Playfair Display SC',serif;font-size:0.72em;letter-spacing:0.1em;color:var(--red);text-decoration:none;">Continue on Page 4 →</a></p>
+    </div>
+    <div class="col">
+      <div class="advert"><span class="ad-kicker">Featured Resource</span><h3>AuctionZip</h3><p>The nation's premier directory of live and online auctions. Search by zip code, category, and date.</p><a href="https://www.auctionzip.com/" target="_blank">Visit AuctionZip →</a></div>
+      <div class="advert"><span class="ad-kicker">Ohio Gardeners</span><h3>Strader's Garden Centers</h3><p>Central Ohio's trusted local nursery for plants, seeds, soil and expert regional growing advice.</p><a href="https://straders.com/" target="_blank">Find a Location →</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- WOODWORKING -->
+<div class="section-page" id="woodworking">
+  <div class="section-banner"><span class="kicker">Section Two</span><h2>The Craftsman's Page</h2><div class="deck">Instruction, Resources &amp; Supplies for the Dedicated Woodworker</div></div>
+  <div class="cols-3">
+    <div class="col">
+      <div class="flag">Instruction</div>
+      <h2 class="hl-lg">The Finest Channels for Moving Image Instruction</h2>
+      <div class="byline">Craftsmen's Desk</div>
+      <p>The modern craftsman enjoys unprecedented access to master-level instruction through the medium of online video. The following channels represent the editorial selections of this gazette.</p>
+      <hr class="rule-single">
+      <div class="no-dropcap">
+        <div class="classified-item"><span class="c-name">The Wood Whisperer</span><span class="c-dots"></span><a href="https://www.youtube.com/@thewoodwhisperer" target="_blank">YouTube</a></div>
+        <p>Marc Spagnuolo — furniture builds, joinery, finishing. The gold standard.</p>
+        <div class="classified-item"><span class="c-name">Stumpy Nubs</span><span class="c-dots"></span><a href="https://www.youtube.com/@StumpyNubs" target="_blank">YouTube</a></div>
+        <p>Practical shop tips, tool reviews, and accessible project content.</p>
+        <div class="classified-item"><span class="c-name">Paul Sellers</span><span class="c-dots"></span><a href="https://www.youtube.com/@PaulSellersWoodwork" target="_blank">YouTube</a></div>
+        <p>Master of traditional hand-tool methods. Chisels, planes, mortise &amp; tenon.</p>
+        <div class="classified-item"><span class="c-name">Woodworking for Mere Mortals</span><span class="c-dots"></span><a href="https://www.youtube.com/@WoodworkingForMereMortals" target="_blank">YouTube</a></div>
+        <p>Steve Ramsey — beginner-friendly weekend projects with basic tools.</p>
+        <div class="classified-item"><span class="c-name">Fine Woodworking (Taunton)</span><span class="c-dots"></span><a href="https://www.youtube.com/@FineWoodworking" target="_blank">YouTube</a></div>
+        <p>Magazine-quality coverage of advanced techniques and master craftsmen.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="flag">Publications &amp; Community</div>
+      <h2 class="hl-lg">Recommended Reading &amp; Forums</h2>
+      <hr class="rule-single">
+      <div class="classified-block">
+        <div class="c-head">Websites &amp; Publications</div>
+        <div class="classified-item"><span><span class="c-name">Fine Woodworking</span><span class="c-desc">Plans, techniques, tool reviews</span></span><a href="https://www.finewoodworking.com/" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">Woodworkers Guild of America</span><span class="c-desc">Free project plans &amp; video library</span></span><a href="https://www.woodworkersguild.com/" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">Woodsmith Plans</span><span class="c-desc">Measured plans, beginner-readable</span></span><a href="https://www.woodsmithplans.com/" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">Sawmill Creek Forums</span><span class="c-desc">Veteran community, deep archives</span></span><a href="https://www.sawmillcreek.org/" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">r/woodworking (Reddit)</span><span class="c-desc">Active community, project sharing</span></span><a href="https://www.reddit.com/r/woodworking/" target="_blank">Visit</a></div>
+      </div>
+      <div class="pull-quote"><p>"Measure twice, cut once — and always read the grain before you plane."</p></div>
+    </div>
+    <div class="col">
+      <div class="flag">Supplies</div>
+      <h2 class="hl-lg">Suppliers of Lumber, Tools &amp; Hardware</h2>
+      <hr class="rule-single">
+      <div class="advert"><span class="ad-kicker">Hardwoods &amp; Supplies</span><h3>Woodcraft Supply</h3><p>Hardwoods, tools, finishing supplies &amp; project hardware. Store locations nationwide.</p><a href="https://www.woodcraft.com/" target="_blank">woodcraft.com</a></div>
+      <div class="advert"><span class="ad-kicker">Jigs, Bits &amp; Hardware</span><h3>Rockler Woodworking</h3><p>Specialty hardware, router bits, jigs, and lumber. The tool for every problem.</p><a href="https://www.rockler.com/" target="_blank">rockler.com</a></div>
+      <div class="advert"><span class="ad-kicker">Premium Hand Tools</span><h3>Lee Valley Tools</h3><p>Planes, chisels, marking tools. Exceptional quality at honest prices.</p><a href="https://www.leevalley.com/" target="_blank">leevalley.com</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- GARDENING -->
+<div class="section-page" id="gardening">
+  <div class="section-banner"><span class="kicker">Section Three</span><h2>The Kitchen Garden</h2><div class="deck">Seeds, Soil &amp; the Timeless Art of Growing One's Own</div></div>
+  <div class="cols-2-1">
+    <div class="col">
+      <div class="flag">Local Guidance</div>
+      <h2 class="hl-xl">The Columbus Gardener's Calendar: Zone 6a in Full</h2>
+      <div class="byline">Garden Correspondent</div>
+      <p>The Hilliard and Columbus environs occupy USDA Hardiness Zone 6a. The last spring frost arrives near the fifteenth of April, and the season closes around the fifteenth of October — providing some two hundred frost-free days for one's agricultural ambitions.</p>
+      <p>Those wishing to grow tomatoes, peppers, and other tender crops should begin seed-starting indoors six to eight weeks before the last frost date. The Old Farmer's Almanac's planting calendar, consulted with one's zip code in hand, provides precise sowing windows for every common vegetable.</p>
+      <div class="pull-quote"><p>"The garden is not merely a place of vegetables — it is a school of patience and a measure of a man's character."</p></div>
+      <p>For those drawn to less conventional methods, Charles Dowding's no-dig approach — which suppresses weeds through cardboard and compost rather than tillage — has converted many a skeptic with its results. MIgardener, a channel of Midwestern sensibility and frugal disposition, speaks with particular authority on the challenges of growing in our region.</p>
+      <hr class="rule-single">
+      <div class="flag">Recommended Channels</div>
+      <div class="no-dropcap">
+        <div class="classified-item"><span class="c-name">Epic Gardening</span><span class="c-dots"></span><a href="https://www.youtube.com/@epicgardening" target="_blank">YouTube</a></div>
+        <div class="classified-item"><span class="c-name">MIgardener</span><span class="c-dots"></span><a href="https://www.youtube.com/@MIgardener" target="_blank">YouTube</a></div>
+        <div class="classified-item"><span class="c-name">Charles Dowding</span><span class="c-dots"></span><a href="https://www.youtube.com/@CharlesDowding1" target="_blank">YouTube</a></div>
+        <div class="classified-item"><span class="c-name">Huw Richards</span><span class="c-dots"></span><a href="https://www.youtube.com/@HuwRichards" target="_blank">YouTube</a></div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="flag">Planning Tools</div>
+      <div class="classified-block">
+        <div class="c-head">Essential Websites</div>
+        <div class="classified-item"><span><span class="c-name">Almanac Planting Calendar</span><span class="c-desc">Enter zip for precise sowing dates</span></span><a href="https://www.almanac.com/gardening/planting-calendar" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">Almanac Garden Planner</span><span class="c-desc">Drag-and-drop layout tool</span></span><a href="https://www.almanac.com/garden-planner" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">USDA Hardiness Zone Map</span><span class="c-desc">Confirm your zone by zip code</span></span><a href="https://planthardiness.ars.usda.gov/" target="_blank">Visit</a></div>
+      </div>
+      <div class="advert"><span class="ad-kicker">Heirloom Varieties</span><h3>Baker Creek Heirloom Seeds</h3><p>Rare, open-pollinated varieties for saving seed year to year.</p><a href="https://www.rareseeds.com/" target="_blank">rareseeds.com</a></div>
+      <div class="advert"><span class="ad-kicker">Professional Grade</span><h3>Johnny's Selected Seeds</h3><p>Trusted by market gardeners. Excellent germination &amp; growing notes.</p><a href="https://www.johnnyseeds.com/" target="_blank">johnnyseeds.com</a></div>
+      <div class="advert"><span class="ad-kicker">Local — Columbus, Ohio</span><h3>Strader's Garden Centers</h3><p>Plants, seeds, soil &amp; expert local advice. Multiple area locations.</p><a href="https://straders.com/" target="_blank">straders.com</a></div>
+      <div class="classified-block" style="margin-top:14px;">
+        <div class="c-head">Community &amp; Forums</div>
+        <div class="classified-item"><span><span class="c-name">r/vegetablegardening</span><span class="c-desc">Active, beginner-friendly community</span></span><a href="https://www.reddit.com/r/vegetablegardening/" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">GardenWeb / Houzz</span><span class="c-desc">Deep archives on soil, pests &amp; plants</span></span><a href="https://www.houzz.com/discussions/garden" target="_blank">Visit</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TRACTORS -->
+<div class="section-page" id="tractors">
+  <div class="section-banner"><span class="kicker">Section Four</span><h2>The Wheel Horse Register</h2><div class="deck">Parts, Restoration, Manuals &amp; Community for the Discerning Collector</div></div>
+  <div class="cols-3">
+    <div class="col">
+      <div class="flag">History</div>
+      <h2 class="hl-lg">South Bend's Finest: A Brief History of the Wheel Horse</h2>
+      <div class="byline">Mechanical Correspondent</div>
+      <p>The Wheel Horse tractor entered production in South Bend, Indiana in the year 1946 under the hand of Elmer Pond, whose ambition was to furnish the American homeowner with a machine of genuine quality. For four decades the firm pursued this aim with uncommon dedication, producing tractors of such robust construction that examples from the 1960s and 1970s remain in active service today.</p>
+      <p>Toro acquired the brand in 1986 and continued production until 2006, maintaining the essential character of the machines even as the industry around them shifted toward disposable equipment.</p>
+      <div class="pull-quote"><p>"A Wheel Horse properly maintained will outlast every machine built since the day it left South Bend."</p></div>
+    </div>
+    <div class="col">
+      <div class="flag">Resources</div>
+      <h2 class="hl-lg">Essential Sources for Parts, Knowledge &amp; Community</h2>
+      <hr class="rule-single">
+      <div class="classified-block">
+        <div class="c-head">Community &amp; Knowledge</div>
+        <div class="classified-item"><span><span class="c-name">MyTractorForum — Wheel Horse</span><span class="c-desc">Primary community, diagrams &amp; archives</span></span><a href="https://www.mytractorforum.com/forumdisplay.php?f=5" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">Owner &amp; Service Manuals</span><span class="c-desc">Free downloads for nearly every model</span></span><a href="https://www.mytractorforum.com/forumdisplay.php?f=168" target="_blank">Library</a></div>
+      </div>
+      <div class="classified-block">
+        <div class="c-head">Parts &amp; Supplies</div>
+        <div class="classified-item"><span><span class="c-name">WHParts.com</span><span class="c-desc">Dedicated Wheel Horse parts supplier</span></span><a href="https://www.wheelhorse.com/" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">eReplacementParts (Toro)</span><span class="c-desc">OEM parts diagrams by model number</span></span><a href="https://www.ereplacementparts.com/toro-parts-s42.html" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">eBay — WH Parts</span><span class="c-desc">NOS and used parts marketplace</span></span><a href="https://www.ebay.com/sch/i.html?_nkw=wheel+horse+tractor+parts" target="_blank">Search</a></div>
+      </div>
+      <div class="classified-block">
+        <div class="c-head">Video Instruction</div>
+        <div class="classified-item"><span><span class="c-name">YouTube Restorations</span><span class="c-desc">Enthusiast-documented restoration videos</span></span><a href="https://www.youtube.com/results?search_query=wheel+horse+tractor+restoration" target="_blank">Search</a></div>
+        <div class="classified-item"><span><span class="c-name">Briggs &amp; Stratton Official</span><span class="c-desc">Engine carb, maintenance &amp; repair</span></span><a href="https://www.youtube.com/@BriggsandStratton" target="_blank">YouTube</a></div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="flag">Maintenance</div>
+      <h2 class="hl-lg">The Seasonal Maintenance Register</h2>
+      <hr class="rule-single">
+      <div class="no-dropcap">
+        <h3 class="hl-sm" style="margin-top:8px;">🌸 Spring Pre-Season Service</h3>
+        <ul class="checklist">
+          <li>Change engine oil and oil filter</li><li>Install fresh fuel; add stabilizer if stored</li><li>Clean or rebuild carburetor</li><li>Inspect and replace drive belts</li><li>Sharpen or replace mower blades</li><li>Grease all zerks and pivot points</li><li>Check battery voltage; clean terminals</li><li>Inspect and inflate tires</li><li>Test all safety switches</li>
+        </ul>
+        <hr class="rule-single">
+        <h3 class="hl-sm">☀️ During-Season Checks</h3>
+        <ul class="checklist">
+          <li>Check oil level every 25 hours</li><li>Clean air filter as needed</li><li>Inspect belt tension monthly</li><li>Keep mower deck scraped clean</li><li>Lubricate throttle and choke cables</li>
+        </ul>
+        <hr class="rule-single">
+        <h3 class="hl-sm">❄️ Winter Storage</h3>
+        <ul class="checklist">
+          <li>Drain fuel or add fuel stabilizer</li><li>Remove spark plug; fog cylinder with oil</li><li>Remove battery and store it indoors</li><li>Clean machine thoroughly; touch up paint</li><li>Cover with a breathable tarp</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AUCTIONS -->
+<div class="section-page" id="auctions">
+  <div class="section-banner"><span class="kicker">Section Five</span><h2>The Saleyard Bulletin</h2><div class="deck">Live Sales, Online Bidding &amp; the Art of the Auction in Central Ohio</div></div>
+  <div class="cols-2">
+    <div class="col">
+      <div class="flag">Correspondent's Report</div>
+      <h2 class="hl-xl">Know Your Price Before You Raise Your Paddle</h2>
+      <div class="byline">Saleyard Reporter</div>
+      <p>The auction house rewards the prepared buyer and punishes the impulsive one with equal reliability. Before attending any sale — whether in the spirited atmosphere of a country farm dispersal or the quieter medium of an online platform — the wise bidder establishes his maximum price through independent research, then adheres to it with the conviction of a man who has learned this lesson before.</p>
+      <p>eBay's completed listings function provides the most reliable gauge of what items actually sell for. One searches for the item in question, filters to completed listings, and examines the green figures — those representing successful sales — to establish a realistic range.</p>
+      <div class="pull-quote"><p>"Set your price at home. The auctioneer's chant was designed to make you forget it."</p></div>
+      <p>The buyer's premium deserves particular attention in the era of online auctions. Most platforms add fifteen to eighteen percent atop the hammer price. A tool purchased for one hundred dollars at the gavel costs one hundred seventeen dollars or more by the time the accounting is complete.</p>
+      <hr class="rule-single">
+      <div class="classified-block">
+        <div class="c-head">Find Upcoming Sales</div>
+        <div class="classified-item"><span><span class="c-name">AuctionZip</span><span class="c-desc">Nation's largest auction directory</span></span><a href="https://www.auctionzip.com/" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">EstateSales.net</span><span class="c-desc">Estate sales near Columbus &amp; Hilliard</span></span><a href="https://www.estatesales.net/" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">Purple Wave Auction</span><span class="c-desc">Farm equipment, Midwest specialty</span></span><a href="https://www.purplewave.com/" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">GovPlanet</span><span class="c-desc">Government &amp; fleet surplus equipment</span></span><a href="https://www.govplanet.com/" target="_blank">Visit</a></div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="flag">Online Bidding</div>
+      <h2 class="hl-lg">The Principal Platforms for Remote Bidding</h2>
+      <hr class="rule-single">
+      <div class="classified-block">
+        <div class="c-head">Online Platforms</div>
+        <div class="classified-item"><span><span class="c-name">HiBid</span><span class="c-desc">Preferred by many Ohio auction houses</span></span><a href="https://www.hibid.com/" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">Proxibid</span><span class="c-desc">Multi-auctioneer; set category alerts</span></span><a href="https://www.proxibid.com/" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">Ritchie Bros. / IronPlanet</span><span class="c-desc">Heavy equipment; pricing research</span></span><a href="https://www.rbauction.com/" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">eBay Completed Listings</span><span class="c-desc">Price research — always check first</span></span><a href="https://www.ebay.com/" target="_blank">Visit</a></div>
+      </div>
+      <div class="classified-block" style="margin-top:14px;">
+        <div class="c-head">Central &amp; Western Ohio Auctioneers</div>
+        <div class="classified-item"><span><span class="c-name">Kaufman Realty &amp; Auctions</span><span class="c-desc">Estate, farm &amp; antique sales across Ohio</span></span><a href="https://www.kaufmanrealty.com/" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">Ohio Auctioneers Directory</span><span class="c-desc">Browse all licensed Ohio auction houses</span></span><a href="https://www.auctionzip.com/OH-Auctioneers/" target="_blank">Browse</a></div>
+      </div>
+      <div class="advert" style="margin-top:20px;">
+        <span class="ad-kicker">Bidder's Maxims</span>
+        <h3>The Four Rules of the Auction Floor</h3>
+        <p>1. Always attend preview day and inspect in person.<br>2. Set your maximum before bidding opens.<br>3. Factor the buyer's premium into every calculation.<br>4. Walk away before exceeding your price.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DIRECTORY -->
+<div class="section-page" id="directory">
+  <div class="section-banner"><span class="kicker">Reference Edition</span><h2>The Complete Directory</h2><div class="deck">Every Resource of This Gazette, Arranged for Ready Consultation</div></div>
+  <div class="cols-2">
+    <div class="col no-dropcap">
+      <div class="classified-block">
+        <div class="c-head">🪵 Woodworking</div>
+        <div class="classified-item"><span><span class="c-name">The Wood Whisperer</span><span class="c-desc">YouTube — furniture &amp; joinery</span></span><a href="https://www.youtube.com/@thewoodwhisperer" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">Stumpy Nubs</span><span class="c-desc">YouTube — shop tips &amp; reviews</span></span><a href="https://www.youtube.com/@StumpyNubs" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">Paul Sellers</span><span class="c-desc">YouTube — hand tool tradition</span></span><a href="https://www.youtube.com/@PaulSellersWoodwork" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">Woodworking for Mere Mortals</span><span class="c-desc">YouTube — beginner projects</span></span><a href="https://www.youtube.com/@WoodworkingForMereMortals" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">Fine Woodworking</span><span class="c-desc">Magazine &amp; plans</span></span><a href="https://www.finewoodworking.com/" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">Woodworkers Guild of America</span><span class="c-desc">Free plans &amp; videos</span></span><a href="https://www.woodworkersguild.com/" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">Sawmill Creek Forums</span><span class="c-desc">Veteran community</span></span><a href="https://www.sawmillcreek.org/" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">Rockler Woodworking</span><span class="c-desc">Tools &amp; hardware</span></span><a href="https://www.rockler.com/" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">Lee Valley Tools</span><span class="c-desc">Premium hand tools</span></span><a href="https://www.leevalley.com/" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">Woodcraft Supply</span><span class="c-desc">Hardwoods &amp; supplies</span></span><a href="https://www.woodcraft.com/" target="_blank">Visit</a></div>
+      </div>
+      <div class="classified-block">
+        <div class="c-head">🌱 Gardening</div>
+        <div class="classified-item"><span><span class="c-name">Almanac Planting Calendar</span><span class="c-desc">Frost dates by zip code</span></span><a href="https://www.almanac.com/gardening/planting-calendar" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">Almanac Garden Planner</span><span class="c-desc">Layout &amp; crop rotation tool</span></span><a href="https://www.almanac.com/garden-planner" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">USDA Zone Map</span><span class="c-desc">Confirm your hardiness zone</span></span><a href="https://planthardiness.ars.usda.gov/" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">Epic Gardening</span><span class="c-desc">YouTube — science-based veg gardening</span></span><a href="https://www.youtube.com/@epicgardening" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">MIgardener</span><span class="c-desc">YouTube — Midwest budget gardening</span></span><a href="https://www.youtube.com/@MIgardener" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">Charles Dowding</span><span class="c-desc">YouTube — no-dig method</span></span><a href="https://www.youtube.com/@CharlesDowding1" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">Baker Creek Heirloom Seeds</span><span class="c-desc">Rare &amp; open-pollinated varieties</span></span><a href="https://www.rareseeds.com/" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">Johnny's Selected Seeds</span><span class="c-desc">Pro-grade seed selection</span></span><a href="https://www.johnnyseeds.com/" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">Strader's Garden Centers</span><span class="c-desc">Local Columbus nursery</span></span><a href="https://straders.com/" target="_blank">Visit</a></div>
+      </div>
+    </div>
+    <div class="col no-dropcap">
+      <div class="classified-block">
+        <div class="c-head">🚜 Wheel Horse Tractors</div>
+        <div class="classified-item"><span><span class="c-name">MyTractorForum — Wheel Horse</span><span class="c-desc">Primary community &amp; knowledge base</span></span><a href="https://www.mytractorforum.com/forumdisplay.php?f=5" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">Owner &amp; Service Manuals</span><span class="c-desc">Free manual archive — nearly every model</span></span><a href="https://www.mytractorforum.com/forumdisplay.php?f=168" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">WHParts.com</span><span class="c-desc">Dedicated Wheel Horse parts</span></span><a href="https://www.wheelhorse.com/" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">eReplacementParts</span><span class="c-desc">OEM parts diagrams (Toro/WH)</span></span><a href="https://www.ereplacementparts.com/toro-parts-s42.html" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">eBay — WH Parts</span><span class="c-desc">NOS and used parts marketplace</span></span><a href="https://www.ebay.com/sch/i.html?_nkw=wheel+horse+tractor+parts" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">WH YouTube Restorations</span><span class="c-desc">Search: wheel horse tractor restoration</span></span><a href="https://www.youtube.com/results?search_query=wheel+horse+tractor+restoration" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">Briggs &amp; Stratton Channel</span><span class="c-desc">Engine maintenance &amp; repair videos</span></span><a href="https://www.youtube.com/@BriggsandStratton" target="_blank">Visit</a></div>
+      </div>
+      <div class="classified-block">
+        <div class="c-head">🔨 Auctions</div>
+        <div class="classified-item"><span><span class="c-name">AuctionZip</span><span class="c-desc">Largest auction directory in the US</span></span><a href="https://www.auctionzip.com/" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">HiBid</span><span class="c-desc">Online bidding — widely used in Ohio</span></span><a href="https://www.hibid.com/" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">EstateSales.net</span><span class="c-desc">Estate sales near Columbus</span></span><a href="https://www.estatesales.net/" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">Purple Wave Auction</span><span class="c-desc">Farm equipment, Midwest focus</span></span><a href="https://www.purplewave.com/" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">Proxibid</span><span class="c-desc">Multi-auctioneer online platform</span></span><a href="https://www.proxibid.com/" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">GovPlanet</span><span class="c-desc">Government surplus &amp; fleet equipment</span></span><a href="https://www.govplanet.com/" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">Ritchie Bros. / IronPlanet</span><span class="c-desc">Heavy equipment; pricing research</span></span><a href="https://www.rbauction.com/" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">Kaufman Realty &amp; Auctions</span><span class="c-desc">Central Ohio auctioneer</span></span><a href="https://www.kaufmanrealty.com/" target="_blank">Visit</a></div>
+        <div class="classified-item"><span><span class="c-name">eBay Completed Listings</span><span class="c-desc">Price research — always check first</span></span><a href="https://www.ebay.com/" target="_blank">Visit</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<footer class="newspaper-footer">
+  <p>Vol. I, No. 1 &nbsp;·&nbsp; March 1, 2026 &nbsp;·&nbsp; Central Ohio Edition</p>
+  <div class="footer-title">The Homestead Gazette</div>
+  <p>All listings provided without warranty &nbsp;·&nbsp; Printed on recycled paper</p>
+</footer>
+</div>
+
+<script>
+  const btns=document.querySelectorAll('.section-nav button');
+  const pages=document.querySelectorAll('.section-page');
+  btns.forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      btns.forEach(b=>b.classList.remove('active'));
+      pages.forEach(p=>p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.section).classList.add('active');
+      window.scrollTo({top:0,behavior:'smooth'});
+    });
+  });
+</script>
+</body>
+</html>
