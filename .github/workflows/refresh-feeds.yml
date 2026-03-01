@@ -1,0 +1,36 @@
+name: Refresh RSS Feeds
+
+on:
+  schedule:
+    # Runs every day at 7:00 AM Eastern (12:00 UTC)
+    - cron: "0 12 * * *"
+  workflow_dispatch:
+    # Allows manual trigger from the GitHub Actions tab
+
+jobs:
+  update-feeds:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write   # needed to commit back to the repo
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run feed updater
+        run: python update_feeds.py
+
+      - name: Commit updated index.html
+        run: |
+          git config user.name  "Sauber-Tribune Bot"
+          git config user.email "actions@github.com"
+          git add index.html
+          # Only commit if there are actual changes
+          git diff --cached --quiet || git commit -m "chore: refresh RSS feeds $(date -u '+%Y-%m-%d')"
+          git push
