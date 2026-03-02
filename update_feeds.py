@@ -222,6 +222,11 @@ def main():
     )
     content = content.replace("<!-- LAST_UPDATED_PLACEHOLDER -->", timestamp_html)
 
+    # ── Date ─────────────────────────────────────────────────────────────────
+    now_et = datetime.now(timezone.utc)  # GitHub Actions runs at 12:00 UTC = 7am ET
+    date_str = now_et.strftime('%A, %B %-d, %Y')
+    content = content.replace('<!-- DATE_PLACEHOLDER -->', date_str)
+
     with open(TEMPLATE_FILE, "w", encoding="utf-8") as f:
         f.write(content)
 
