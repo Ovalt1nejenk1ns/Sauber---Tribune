@@ -5,8 +5,17 @@ update_feeds.py
 Fetches RSS feeds and current weather for The Sauber-Tribune,
 then injects them directly into index.html as static HTML.
 Run daily by GitHub Actions.
+
+DESIGN: Every injected block is wrapped in sentinel comments:
+    <!-- BEGIN_BLOCK:NAME --> ... injected content ... <!-- END_BLOCK:NAME -->
+
+On each run, the regex replacer finds the BEGIN/END sentinels and overwrites
+whatever is between them — whether that's a fresh placeholder or yesterday's
+content. This means the script is idempotent and safe to run any number of
+times without placeholders being "consumed".
 """
 
+import re
 import urllib.request
 import urllib.parse
 import xml.etree.ElementTree as ET
@@ -16,36 +25,41 @@ from email.utils import parsedate_to_datetime
 import html as html_lib
 import sys
 
-# ── Feed configuration ──────────────────────────────────────────────────────
-FEEDS = {
-    "RSS_PLACEHOLDER_RSS_FRONT": {
-        "url":   "https://growagoodlife.com/feed",
-        "label": "Grow a Good Life",
-        "count": 6,
+# ── Feed configuration ───────────────────────────────────────────────────────
+FEEDS = [
+    {
+        "block":  "RSS_FRONT",
+        "url":    "https://growagoodlife.com/feed",
+        "label":  "Grow a Good Life",
+        "count":  6,
     },
-    "RSS_PLACEHOLDER_RSS_WOODWORKING": {
-        "url":   "https://www.finewoodworking.com/feed",
-        "label": "Fine Woodworking",
-        "count": 6,
+    {
+        "block":  "RSS_WOODWORKING",
+        "url":    "https://www.finewoodworking.com/feed",
+        "label":  "Fine Woodworking",
+        "count":  6,
     },
-    "RSS_PLACEHOLDER_RSS_GARDENING": {
-        "url":   "https://harvesttotable.com/feed",
-        "label": "Harvest to Table",
-        "count": 6,
+    {
+        "block":  "RSS_GARDENING",
+        "url":    "https://harvesttotable.com/feed",
+        "label":  "Harvest to Table",
+        "count":  6,
     },
-    "RSS_PLACEHOLDER_RSS_TRACTORS": {
-        "url":   "https://thecontraryfarmer.wordpress.com/feed",
-        "label": "The Contrary Farmer",
-        "count": 6,
+    {
+        "block":  "RSS_TRACTORS",
+        "url":    "https://thecontraryfarmer.wordpress.com/feed",
+        "label":  "The Contrary Farmer",
+        "count":  6,
     },
-    "RSS_PLACEHOLDER_RSS_DIY": {
-        "url":   "https://www.familyhandyman.com/feed/",
-        "label": "Family Handyman",
-        "count": 6,
+    {
+        "block":  "RSS_DIY",
+        "url":    "https://www.familyhandyman.com/feed/",
+        "label":  "Family Handyman",
+        "count":  6,
     },
-}
+]
 
-# Tiffin, OH coordinates for Open-Meteo (free, no API key)
+# Tiffin, OH coordinates — Open-Meteo (free, no API key)
 WEATHER_LAT  = 41.1148
 WEATHER_LON  = -83.1779
 WEATHER_CITY = "Tiffin, Ohio"
@@ -54,14 +68,42 @@ TEMPLATE_FILE = "index.html"
 HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; SauberTribune/1.0)"}
 
 
+# ── Sentinel helpers ─────────────────────────────────────────────────────────
+
+def inject(content: str, block_name: str, new_html: str) -> str:
+    """
+    Replace everything between:
+        <!-- BEGIN_BLOCK:BLOCK_NAME --> and <!-- END_BLOCK:BLOCK_NAME -->
+    with new_html.  If the sentinels don't exist yet, the content is unchanged
+    and a warning is printed (shouldn't happen once index.html is set up).
+    """
+    pattern = (
+        r"<!-- BEGIN_BLOCK:" + re.escape(block_name) + r" -->"
+        r".*?"
+        r"<!-- END_BLOCK:"   + re.escape(block_name) + r" -->"
+    )
+    replacement = (
+        f"<!-- BEGIN_BLOCK:{block_name} -->"
+        f"{new_html}"
+        f"<!-- END_BLOCK:{block_name} -->"
+    )
+    result, n = re.subn(pattern, replacement, content, flags=re.DOTALL)
+    if n == 0:
+        print(f"  WARNING: sentinels for '{block_name}' not found in {TEMPLATE_FILE}")
+    return result
+
+
+# ── Network ──────────────────────────────────────────────────────────────────
+
 def fetch_url(url: str) -> bytes:
     req = urllib.request.Request(url, headers=HEADERS)
     with urllib.request.urlopen(req, timeout=15) as r:
         return r.read()
 
 
+# ── RSS helpers ──────────────────────────────────────────────────────────────
+
 def strip_tags(text: str) -> str:
-    import re
     return re.sub(r"<[^>]+>", "", text).strip()
 
 
@@ -81,23 +123,28 @@ def parse_items(xml_bytes: bytes, count: int) -> list[dict]:
         link_el  = item.find("link")
         date_el  = item.find("pubDate")
         desc_el  = item.find("description")
+
         title = html_lib.unescape(title_el.text or "") if title_el is not None else "Untitled"
         link  = (link_el.text or "").strip()           if link_el  is not None else "#"
         date  = format_date(date_el.text or "")        if date_el  is not None else ""
         raw   = strip_tags(html_lib.unescape(desc_el.text or "")) if desc_el is not None else ""
         desc  = (raw[:110] + "…") if len(raw) > 110 else raw
+
         items.append({"title": title, "link": link, "date": date, "desc": desc})
         if len(items) >= count:
             break
     return items
 
 
-def render_items(items: list[dict]) -> str:
+def render_rss(items: list[dict]) -> str:
     if not items:
         return '<div class="rss-error">No items found in feed.</div>'
     parts = []
     for item in items:
-        desc_html = f'<span class="rss-desc">{html_lib.escape(item["desc"])}</span>' if item["desc"] else ""
+        desc_html = (
+            f'<span class="rss-desc">{html_lib.escape(item["desc"])}</span>'
+            if item["desc"] else ""
+        )
         parts.append(
             f'<div class="rss-item">'
             f'<a href="{html_lib.escape(item["link"])}" target="_blank" rel="noopener">'
@@ -109,8 +156,9 @@ def render_items(items: list[dict]) -> str:
     return "\n".join(parts)
 
 
+# ── Weather ──────────────────────────────────────────────────────────────────
+
 def fetch_weather() -> str:
-    """Fetch current weather from Open-Meteo (free, no API key required)."""
     params = urllib.parse.urlencode({
         "latitude":         WEATHER_LAT,
         "longitude":        WEATHER_LON,
@@ -126,7 +174,7 @@ def fetch_weather() -> str:
     temp     = round(c["temperature_2m"])
     wind     = round(c["windspeed_10m"])
     humidity = round(c["relativehumidity_2m"])
-    code     = c["weathercode"]
+    code     = int(c["weathercode"])
     updated  = datetime.now(timezone.utc).strftime("%-I:%M %p UTC, %b %-d")
 
     code_map = {
@@ -169,70 +217,69 @@ def fetch_weather() -> str:
     )
 
 
+# ── Main ─────────────────────────────────────────────────────────────────────
+
 def main():
     with open(TEMPLATE_FILE, "r", encoding="utf-8") as f:
         content = f.read()
 
     errors = []
+    now_utc = datetime.now(timezone.utc)
 
-    # ── Weather ──────────────────────────────────────────────────────────────
+    # ── Date ──────────────────────────────────────────────────────────────────
+    # GitHub Action runs at 12:00 UTC = 7:00 AM Eastern
+    date_str = now_utc.strftime("%A, %B %-d, %Y")
+    print(f"Injecting date: {date_str}")
+    content = inject(content, "DATE", date_str)
+
+    # ── Weather ───────────────────────────────────────────────────────────────
     print("Fetching weather for Tiffin, OH …", end=" ", flush=True)
     try:
         weather_html = fetch_weather()
-        content = content.replace("<!-- WEATHER_PLACEHOLDER -->", weather_html)
+        content = inject(content, "WEATHER", weather_html)
         print("OK")
     except Exception as e:
         print(f"FAILED — {e}")
         errors.append("Weather")
-        content = content.replace(
-            "<!-- WEATHER_PLACEHOLDER -->",
+        content = inject(
+            content, "WEATHER",
             '<div class="rss-error">Weather temporarily unavailable.</div>'
         )
 
     # ── RSS Feeds ─────────────────────────────────────────────────────────────
-    for placeholder, cfg in FEEDS.items():
-        print(f"Fetching: {cfg['url']} …", end=" ", flush=True)
+    for cfg in FEEDS:
+        print(f"Fetching {cfg['label']} …", end=" ", flush=True)
         try:
             xml_bytes = fetch_url(cfg["url"])
             items     = parse_items(xml_bytes, cfg["count"])
-            rendered  = render_items(items)
-            marker    = f"<!-- {placeholder} -->"
-            if marker not in content:
-                print("WARNING: placeholder not found — skipping.")
-                continue
-            content = content.replace(marker, rendered)
+            rendered  = render_rss(items)
+            content   = inject(content, cfg["block"], rendered)
             print(f"OK ({len(items)} items)")
         except Exception as e:
             print(f"FAILED — {e}")
             errors.append(cfg["label"])
-            marker   = f"<!-- {placeholder} -->"
             fallback = (
-                f'<div class="rss-error">Feed temporarily unavailable.<br>'
+                f'<div class="rss-error">Feed temporarily unavailable. '
                 f'Visit <a href="{cfg["url"]}">{cfg["label"]}</a> directly.</div>'
             )
-            content = content.replace(marker, fallback)
+            content = inject(content, cfg["block"], fallback)
 
-    # ── Timestamp ─────────────────────────────────────────────────────────────
-    now = datetime.now(timezone.utc).strftime("%B %-d, %Y at %-I:%M %p UTC")
+    # ── Last updated timestamp ────────────────────────────────────────────────
+    now_str = now_utc.strftime("%B %-d, %Y at %-I:%M %p UTC")
     timestamp_html = (
         f'<div style="text-align:center;font-family:\'Courier Prime\',monospace;'
         f'font-size:0.65em;color:var(--ink-faint);padding:6px 0 2px;'
         f'border-top:1px solid var(--rule);">'
-        f'Feeds last refreshed: {now}</div>'
+        f'Feeds last refreshed: {now_str}</div>'
     )
-    content = content.replace("<!-- LAST_UPDATED_PLACEHOLDER -->", timestamp_html)
-
-    # ── Date ─────────────────────────────────────────────────────────────────
-    now_et = datetime.now(timezone.utc)  # GitHub Actions runs at 12:00 UTC = 7am ET
-    date_str = now_et.strftime('%A, %B %-d, %Y')
-    content = content.replace('<!-- DATE_PLACEHOLDER -->', date_str)
+    content = inject(content, "LAST_UPDATED", timestamp_html)
 
     with open(TEMPLATE_FILE, "w", encoding="utf-8") as f:
         f.write(content)
 
-    print(f"\nDone. index.html updated.")
+    print(f"\nDone. {TEMPLATE_FILE} updated.")
     if errors:
-        print(f"Items with errors: {', '.join(errors)}")
+        print(f"Errors: {', '.join(errors)}")
         sys.exit(1)
 
 
